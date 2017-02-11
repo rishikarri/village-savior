@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+	<html>
+	<head>
+		<title>Survivor!</title>
+
+		<link rel="stylesheet" type="text/css" href="survivor-canvas-game.css">
+	</head>
+	<body>
+
+	<!-- This section will contain the score, the high score and the gold collected Score will be the total time alive, high score will update with the score and gold collected will go up whenever the user collects gold-->
+
+	<!-- This will also contain the buttons to start, stop and pause the game -->
+	
+	<div id="game-wrapper">
+		<div id="top-section">
+			<div id="game-stats">
+				<h2 id="scoreKeeper">Score: 0</h2>
+				<h2 id="highScoreKeeper">High Score: 0</h2>
+				<!-- <div id="treasure-chest">
+					<img src="Images/treasure-chest-2.png">
+
+				</div> -->
+				
+					<!-- <img src="Images/gold-holder.png"> -->
+				<p id="gold-collected">0</p>	
+				
+				
+				
+				<p id="health">20</p>
+			</div>
+
+			<div id="game-play-buttons">
+				<button id="start-button"onclick="startGame()">Start a New Game</button>
+				<button id="pause-button" onclick="pauseGame()">Pause Game</button>
+				<button id="resume-button" onclick="resumeGame()">Resume Game</button>
+				<button id="open-shop-button"onclick="openShop(); checkPurchasingAbility();">Enter Shop</button>
+
+				<button id="view-instructions-button"onclick="viewInstructions();">View Instructions</button>
+				<!-- Make a form here -->
+				<!-- <form id="enter-name-form" onsubmit="recordName();">
+
+					<input type="text" placeholder="Your First Name" id="enter-name-box">
+
+					<button type="submit">Submit</button>
+
+				</form> -->
+					
+				<!-- Come back to returning player later -->
+				
+			</div>
+
+			<!-- The Modal / Shop -->
+			
+			<div id="text-section">
+				<h2 id="textDisplay">&nbsp;</h2>
+			</div>
+		</div>
+
+		
+
+
+		<div id="middle-section">
+
+
+		<!-- holds the canvas  -->
+		</div>
+
+		<div id="modal-shop">
+
+		  <!-- Modal content -->
+		  <div class="modal-shop-content">
+		    <span class="close-shop">&times;</span>
+		    <p>Welcome to the Shop! Here we have help and supplies that should aid in your quest to protect the land!</p>
+		    
+		    <div id="shop-buttons">
+		    	<div id="health-potion-div">
+		    		<button id="health-potion-button" onclick="drinkHealthPotion()">Drink Health Potion</button>	
+
+		    		<img src="Images/health-potion.png">
+
+		    		<p class="gold-text"> 50 gold </p>
+
+		    		<p> Heals 3 HP! </p>
+		    	</div>
+		    	
+		    	<div id="fire-arrows-div">
+		    		<button id="fire-arrows-button" onclick="giveHeroFireArrows()">Upgrade to Flame Arrows</button>
+
+		    		<img src="Images/fire-arrowUpgrade.png">
+
+		    		<p class="gold-text"> 300 gold </p>
+
+		    		<p> Ignites arrow tips on fire which deal more damage! </p>
+
+		    	</div>
+
+		    	<div>
+		    		<button id="speed-potion-button" onclick="drinkSpeedPotion()">Buy Speed Potion</button>
+
+		    		<img src="Images/speed-potion.png">
+
+		    		<p class="gold-text"> 500 gold </p>
+
+		    		<p>Boost your speed!</p>
+		    	</div>
+		    	
+		    	
+		    	<div>
+		    		<button id="ninja-button" onclick="hireNinja()">Hire a Ninja</button>
+
+		    		<img src="possible-enemies-allies/ninja2 store version.png">
+		    		<p class="gold-text"> 700 gold </p>
+
+		    		<p>Hire a Ninja who will loyally fight by your side until the end!</p>
+
+		    	</div>
+		    	
+
+		    </div>
+		    
+
+		  </div>
+
+		</div>
+
+		
+		<div id="modal-instructions">
+
+			<div class="modal-instructions-content">
+	    		<span class="close-instructions">&times;</span>
+	    		<p>Hello there noble archer! Our land has been overrun by bandits and monsters! Please destroy as many of them as you can before your health falls to the point where you must retreat. Instructions on how to fight are below!</p>
+
+	    		<p> Use the arrows to move! </p>
+
+	    	</div>	
+		</div>
+		
+
+	</div>
+
+
+	<script type="text/javascript" src="survivor-canvas-game.js"></script>
+	</body>
+</html>
