@@ -12,35 +12,44 @@ Contents
     Code Examples
 
 Overview
-
     Monsters and thieves are about to attack your village. Stave them off as long as you can in order to give the villagers time to escape! Be very careful! If your health falls to 0, you must retreat!
 
-    
+    This game is a basic survivor game where the character has access to a shop. The goal of the game is to stay alive as long as possible with score equated to time playing the game. 
 
+    I built this game without using any frameworks in order to learn as much native JavaScript, HTML, and CSS as possible.     
     
 
 
 What I Used
-    HTML & CSS, Javascript (Code is intentionally written without frameworks)
+    HTML & CSS, JavaScript (code is intentionally written without frameworks)
 
 Challenges and Solutions
     
+    Challenge 1: Create a goblin that moves around the map randomly 
 
-    RK To Write
+    Solution: I solved this problem by giving the goblin a random destination. Once the goblin reached its destination, another random destination would be generated. This caused the goblin to move around at random. 
+
+    Challenge 2: Preventing the user from buying things he / she can't afford. 
+
+    Solution: The solution to this problem was actually easier than I thought. Each time the user opened up the shop, I ran code to see if the user's gold was sufficent to purchase any of the items. If so, I allowed the button to remain on the page. If not, I disabled it, thus preventing the user from purchasing an item that was out of his / her budget. 
+
+    Challenge 3: Create a ninja that is an ally and throws ninja stars across the screen 
+
+    Solution: I solved this problem by making the ninja similar to the goblin. The ninja always has a random destination. When the ninja gets to its destination, it throws a ninja star based on where it is on the screen. If it is on the left side of the screen, it throws the ninja star right. If it is on the right side of the screen, it throws its ninja star left. 
+
+
     
 
 MVP
-    ALlow the user to:
+    Allow the user to:
         Fight goblins succesfully using arrows. 
 
         Lose the game if his/her health falls to 0. 
 
         Buy a health potion at a shop
 
-Our Stretch Goals
-
-
-    ALlow the user to:
+My Stretch Goals
+    Allow the user to:
         Fight bandits
         Fight Golems
         Buy a speed potion
@@ -51,11 +60,54 @@ Author
     Rishi Karri
     
 
-Screen shots
-        TBD
+Demo of gameplay: 
+        https://www.youtube.com/watch?v=kVRCTKB7NRo&feature=youtu.be 
         
 Github
     <a href='https://github.com/rishikarri/village-savior'>Village Savior</a>
 
 Code Examples
-    RK to write 
+    
+    Within the draw function: 
+
+        // drawing ninjas on the screen in addition to each one of their ninja star locations
+        for (var i = 0; i < ninjaArray.length; i++){
+            context.drawImage(ninjaArray[i].image, ninjaArray[i].x, ninjaArray[i].y);
+            context.drawImage(ninjaArray[i].ninjaStarImage, ninjaArray[i].ninjaStarLocation.x, ninjaArray[i].ninjaStarLocation.y);
+
+        }
+
+
+    Game over function: 
+        //end game if player has 0 or less health
+        function checkGameStatus(health){
+            if(health <= 0){
+                //you lost
+                gameOn = false;
+                document.getElementById("textDisplay").innerHTML = "GAME OVER";                
+                disableButton("pause-button");
+                disableButton("resume-button");
+                disableButton("open-shop-button");
+            }
+        }
+
+
+    Within the update function: 
+
+        // a for loop that goes through all necessary updates for all goblins
+        for (var i = 0; i < goblinArray.length; i++) {
+            if(goblinArray[i].health <= 0){
+                // if the goblin's health is less than 0, there is no need to check to see if it got hit by anything, whether it caught our hero or make it move - simply do nothing here
+            }else{
+
+                // if the goblin has more than 0 health move it and check to see the others         
+                goblinArray[i].move();
+                goblinArray[i].catchRobinHood();
+                goblinArray[i].getHitByNinjaStar();
+                goblinArray[i].getHitByArrow();         
+            }
+            
+        }
+
+
+

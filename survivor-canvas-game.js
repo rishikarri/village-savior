@@ -1126,6 +1126,7 @@ function draw(){
 		}
 	}
 
+	// drawing ninjas on the screen in addition to each one of their ninja star locations
 	for (var i = 0; i < ninjaArray.length; i++){
 		context.drawImage(ninjaArray[i].image, ninjaArray[i].x, ninjaArray[i].y);
 		context.drawImage(ninjaArray[i].ninjaStarImage, ninjaArray[i].ninjaStarLocation.x, ninjaArray[i].ninjaStarLocation.y);
