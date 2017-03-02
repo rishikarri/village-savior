@@ -1000,7 +1000,7 @@ function giveHeroFireArrows(){
 
 	
 
-robinHood.gold += 10000;
+robinHood.gold += 2500;
 
 
 // ----------------------------------------------------------
