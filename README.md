@@ -1,17 +1,17 @@
 Village Savior - Rishi Karri
 <a href="http://www.rishikarri.com/village-savior">Village Savior</a>
-Contents
-    Overview
-    What I Used
-    Challenges and Solutions
-    MVP
-    Stretch Goals
-    Author
-    Screenshots
-    Github Link
-    Code Examples
+#Contents
+    1. Overview
+    2. What I Used
+    3. Challenges and Solutions
+    4. MVP
+    5. Stretch Goals
+    6. Author
+    7. Screenshots
+    8. Github Link
+    9. Code Examples
 
-#Overview#
+##Overview
     Monsters and thieves are about to attack your village. Stave them off as long as you can in order to give the villagers time to escape! Be very careful! If your health falls to 0, you must retreat!
 
     This game is a basic survivor game where the character has access to a shop. The goal of the game is to stay alive as long as possible with score equated to time playing the game. 
@@ -20,10 +20,11 @@ Contents
     
 
 
-What I Used
+
+##What I Used
     HTML & CSS, JavaScript (code is intentionally written without frameworks)
 
-Challenges and Solutions
+##Challenges and Solutions
     
     Challenge 1: Create a goblin that moves around the map randomly 
 
@@ -40,7 +41,7 @@ Challenges and Solutions
 
     
 
-MVP
+##MVP
     Allow the user to:
         Fight goblins succesfully using arrows. 
 
@@ -48,7 +49,7 @@ MVP
 
         Buy a health potion at a shop
 
-My Stretch Goals
+##My Stretch Goals
     Allow the user to:
         Fight bandits
         Fight Golems
@@ -56,17 +57,17 @@ My Stretch Goals
         Buy flaming arrows
         Hire a ninja
 
-Author
+##Author
     Rishi Karri
     
 
-Demo of gameplay: 
+##Demo of gameplay: 
         https://www.youtube.com/watch?v=kVRCTKB7NRo&feature=youtu.be 
         
-Github
+##Github
     <a href='https://github.com/rishikarri/village-savior'>Village Savior</a>
 
-Code Examples
+C##ode Examples
     
     Within the draw function: 
 
