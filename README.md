@@ -11,7 +11,7 @@ Contents
     Github Link
     Code Examples
 
-Overview
+#Overview#
     Monsters and thieves are about to attack your village. Stave them off as long as you can in order to give the villagers time to escape! Be very careful! If your health falls to 0, you must retreat!
 
     This game is a basic survivor game where the character has access to a shop. The goal of the game is to stay alive as long as possible with score equated to time playing the game. 
