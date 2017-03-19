@@ -16,7 +16,7 @@ Overview
 
     This game is a basic survivor game where the character has access to a shop. The goal of the game is to stay alive as long as possible with score equated to time playing the game. 
 
-    I built this game without using any frameworks in order to learn as much native JavaScript, HTML, and CSS as possible.     
+    I built this game without using any frameworks in order to learn as much vanilla JavaScript, HTML, and CSS as possible.     
     
 
 
