@@ -1,5 +1,4 @@
 Village Savior - Rishi Karri
-<a href="http://www.rishikarri.com/village-savior">Village Savior</a>
 #Contents
     1. Overview
     2. What I Used
