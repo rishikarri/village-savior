@@ -25,6 +25,7 @@ backgroundImage.src = "Images/background2.jpeg";
 
 
 var score = 0;
+
 counterInterval = setInterval(updateCounter, 1000);
 
 function updateCounter(){
