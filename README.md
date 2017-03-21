@@ -1,5 +1,5 @@
 Village Savior - Rishi Karri
-#Contents
+# Contents
     1. Overview
     2. What I Used
     3. Challenges and Solutions
@@ -9,7 +9,7 @@ Village Savior - Rishi Karri
     7. Demo of Gameplay
     8. Code Examples
 
-##Overview
+## Overview
     Monsters and thieves are about to attack your village. 
     Stave them off as long as you can in order to give the villagers time to escape! 
     Be very careful! If your health falls to 0, you must retreat!
@@ -24,10 +24,10 @@ Village Savior - Rishi Karri
 
 
 
-##What I Used
+## What I Used
     HTML & CSS, HTML Canvas, JavaScript (code is intentionally written without frameworks)
 
-##Challenges and Solutions
+## Challenges and Solutions
     
     Challenge 1: Create a goblin that moves around the map randomly.
 
@@ -50,13 +50,13 @@ Village Savior - Rishi Karri
 
     
 
-##MVP
+## MVP
     Allow the user to:
         1. Fight goblins succesfully using arrows
         2. Lose the game if his/her health falls to 0
         3. Buy a health potion at a shop
 
-##My Stretch Goals
+## My Stretch Goals
     Allow the user to:
         1. Fight bandits
         2. Fight Golems
@@ -67,15 +67,15 @@ Village Savior - Rishi Karri
         7. Pause, resume and start a new game
 
 
-##Author
+## Author
     Rishi Karri
     
 
-##Demo of gameplay: 
+## Demo of gameplay: 
     https://www.youtube.com/watch?v=kVRCTKB7NRo&feature=youtu.be 
 
 
-##Code Examples
+## Code Examples
     
     Within the draw function: 
 
