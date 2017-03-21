@@ -45,7 +45,8 @@ Village Savior - Rishi Karri
     Challenge 3: Create a ninja that is an ally and throws ninja stars which can injure enemies. 
 
     Solution: I solved this problem by making the ninja movement similar to the goblin. 
-    The ninja always has a random destination. When the ninja gets to its destination, it throws a ninja star based on where it is on the screen. If it is on the left side of the screen, it throws the ninja star right. If it is on the right side of the screen, it throws its ninja star left. 
+    The ninja always has a random destination. When the ninja gets to its destination, it throws a ninja star based on where it is on the screen. If it is on the left side of the screen, it throws the ninja star right. 
+    If it is on the right side of the screen, it throws its ninja star left. 
     This prevents the ninja from throwing useless stars and provides the user with a helpful ally. 
 
     
