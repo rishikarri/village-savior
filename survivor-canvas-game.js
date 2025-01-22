@@ -146,7 +146,7 @@ var shooting = false;
 var arrowDamage = 1;
 function Hero(name, image, speed) {
 	this.name = name;
-	this.health = 3;
+	this.health = 20;
 	this.gold = 0;
 	this.image = new Image();
 	this.image.src = image;
@@ -1007,15 +1007,15 @@ function checkPurchasingAbility() {
 		disableButton("health-potion-button");
 		disableButton("speed-potion-button");
 		disableButton("fire-arrows-button");
-		disableButton("ninja-button");
+		// disableButton("ninja-button");
 	} else if (robinHood.gold < 300) {
 		disableButton("speed-potion-button");
 		disableButton("fire-arrows-button");
-		disableButton("ninja-button");
+		// disableButton("ninja-button");
 	} else if (robinHood.gold < 500) {
 		disableButton("speed-potion-button");
-		disableButton("ninja-button");
-	} else if (robinHood.gold < 700) {
+		// disableButton("ninja-button");
+	} else if (robinHood.gold < 80) {
 		disableButton("ninja-button");
 	}
 }
@@ -1039,7 +1039,7 @@ function hireNinja() {
 	var newNinja = new Ninja(newNinjaName);
 	ninjaArray.push(newNinja);
 	ninjaNumber++;
-	robinHood.gold -= 700;
+	robinHood.gold -= 80;
 	document.getElementById("gold-collected").innerHTML = robinHood.gold;
 	checkPurchasingAbility();
 }
