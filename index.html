@@ -22,7 +22,7 @@
 				</div> -->
 				
 					<!-- <img src="Images/gold-holder.png"> -->
-				<p id="gold-collected">0</p>	
+				<p id="gold-collected">100</p>	
 				
 				
 				
@@ -63,7 +63,9 @@
 
 
 		<!-- holds the canvas  -->
-		<div id="hurtByEnemy">Hurt By Enemy</div>
+
+		<!-- Throws an overlay of red when hero gets hurt -->
+		<div id="hurtByEnemy"></div>
 		</div>
 
 		<div id="modal-shop">
@@ -107,7 +109,7 @@
 		    	
 		    	
 		    	<div>
-		    		<button id="ninja-button" onclick="() => hireNinja()">Hire a Ninja</button>
+		    		<button id="ninja-button" onclick="hireNinja()">Hire a Ninja</button>
 
 		    		<img src="possible-enemies-allies/ninja2 store version.png">
 		    		<p class="gold-text"> 80 gold </p>

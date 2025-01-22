@@ -608,42 +608,45 @@ class Thug extends Enemy {
 
 }
 //let's create a golem
-function Golem(name) {
+class Golem extends Enemy {
 
-	this.name = name;
-	this.health = 80;
-	this.image = new Image();
-	this.image.src = "possible-enemies-allies/golem1.png";
-	this.speed = 1;
-	this.x = 300;
-	this.y = 200;
-	this.move = function () {
-		if (Math.abs(this.x - robinHood.x) < 32) {
-			this.catchRobinHood();
-		} else if (this.x < robinHood.x) {
-			this.x += 1.3 * this.speed;
-			this.image.src = "possible-enemies-allies/golem1.png";
-		} else {
-			this.x -= 1.3 * this.speed;
-			this.image.src = "possible-enemies-allies/golem-face-left.png";
-		}
-
-		if (Math.abs(this.y - robinHood.y) < 32) {
-			this.catchRobinHood();
-		} else if (this.y > robinHood.y) {
-			this.y -= 1.3 * this.speed;
-		} else {
-			this.y += 1.3 * this.speed;
+	constructor(name) {
+		super()
+		this.name = name;
+		this.health = 80;
+		this.image = new Image();
+		this.image.src = "possible-enemies-allies/golem1.png";
+		this.speed = 1;
+		this.x = 300;
+		this.y = 200;
+		this.move = function () {
+			if (Math.abs(this.x - robinHood.x) < 32) {
+				this.catchRobinHood();
+			} else if (this.x < robinHood.x) {
+				this.x += 1.3 * this.speed;
+				this.image.src = "possible-enemies-allies/golem1.png";
+			} else {
+				this.x -= 1.3 * this.speed;
+				this.image.src = "possible-enemies-allies/golem-face-left.png";
+			}
+	
+			if (Math.abs(this.y - robinHood.y) < 32) {
+				this.catchRobinHood();
+			} else if (this.y > robinHood.y) {
+				this.y -= 1.3 * this.speed;
+			} else {
+				this.y += 1.3 * this.speed;
+			}
 		}
 	}
 
-	this.catchRobinHood = function () {
+	catchRobinHood = function () {
 		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
 		if (
 			Math.abs((this.x - robinHood.x)) < 32
 			&& Math.abs(this.y - robinHood.y) < 32
 		) {
-
+			this.showHeroHurtOverlay();
 			//generate new location if you hit him
 			//robin hoood got hit
 			this.x = Math.random() * 440 + 40;
@@ -654,7 +657,7 @@ function Golem(name) {
 		}
 
 	}
-	this.getHitByArrow = function () {
+	getHitByArrow = function () {
 		if (
 			Math.abs(robinHood.arrowLocation.x - this.x) < 30
 			&& Math.abs(robinHood.arrowLocation.y - this.y) < 70
@@ -668,7 +671,7 @@ function Golem(name) {
 		}
 	}
 
-	this.getHitByNinjaStar = function () {
+	getHitByNinjaStar = function () {
 
 		for (var i = 0; i < ninjaArray.length; i++) {
 			if (
@@ -689,7 +692,7 @@ function Golem(name) {
 	//changes the speed of the goblin and adds gold if dead
 
 
-	this.changeSpeed = function () {
+	changeSpeed = function () {
 		if (this.health == 50) {
 			this.speed = .4;
 		} else if (this.health == 20) {
@@ -1055,6 +1058,7 @@ var ninjaArray = [];
 var ninjaNumber = 0;
 // create ninja generator
 function hireNinja() {
+	console.log("NINJA HIRED")
 	var newNinjaName = "ninja" + ninjaNumber;
 	var newNinja = new Ninja(newNinjaName);
 	ninjaArray.push(newNinja);
@@ -1126,6 +1130,7 @@ function update() {
 	checkIfHighScore();
 
 
+	console.log('ninja', ninjaArray)
 	for (var i = 0; i < ninjaArray.length; i++) {
 		ninjaArray[i].move();
 		ninjaArray[i].moveNinjaStar();
