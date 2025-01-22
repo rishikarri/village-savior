@@ -159,37 +159,39 @@ function Hero(name, image, speed) {
 	// this function will follow the hero if he is not shooting
 	this.arrowMove = function () {
 		//if the arrow is not within 10 pixels of its destination, keep it going
-		let counter = 0; 
-		while (counter < 10) {
-			if (this.arrowLocation.x < this.arrowLocation.destinationX) {
-				console.log('shooting', shooting)
-				console.log('this.arrowLocation', this.arrowLocation)
-				this.arrowLocation.x += 6;
-				const a = this.arrowLocation.x += 6;
-				console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
-			}
-			counter++;
+		let counter = 0;
+		if (this.arrowLocation.x < this.arrowLocation.destinationX) {
+
+			console.log('shooting', shooting)
+			console.log('this.arrowLocation', this.arrowLocation)
+			this.arrowLocation.x += 6;
+			const a = this.arrowLocation.x += 6;
+			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
+
+			
 		}
 	}
-	// this.arrowFollow = function () {
-	// 	if (!shooting) {
-	// 		if (this.faceLeft) {
-	// 			this.arrowLocation.x = this.x - 4;
-	// 			this.arrowLocation.y = this.y + 18;
+	this.arrowFollow = function () {
+		if (!shooting) {
+			if (this.faceLeft) {
+				this.arrowLocation.x = this.x - 4;
+				this.arrowLocation.y = this.y + 18;
 
-	// 		} else if (!this.faceLeft) {
-	// 			this.arrowLocation.x = this.x + 22;
-	// 			this.arrowLocation.y = this.y + 18;
+			} 
+			
+			if (!this.faceLeft) {
+				this.arrowLocation.x = this.x + 22;
+				this.arrowLocation.y = this.y + 18;
 
-	// 		}
-	// 	}
-	// }
+			}
+		}
+	}
 
 	this.arrowLocation = {
 		x: 222,
 		y: 218,
-		destinationX: 0,
-		destinationY: 0
+		destinationX: 222,
+		destinationY: 218
 	}
 	// create a function native to the main character that allows him to move
 	this.move = function (keysPressed) {
@@ -205,8 +207,10 @@ function Hero(name, image, speed) {
 					this.arrowImage.src = "Images/arrow-left.png";
 				}
 
-				// this.arrowLocation.x = this.x - 4; 
-				// this.arrowLocation.y = this.y + 18;
+				if (!shooting) {
+					this.arrowLocation.x = this.x - 4; 
+					this.arrowLocation.y = this.y + 18;
+				}
 				this.faceLeft = true;
 
 			}
@@ -247,6 +251,7 @@ function Hero(name, image, speed) {
 		// }
 
 		if (keyQueue.indexOf(68) !== -1) {
+			keyQueue.pop()
 			console.log('shooting function')
 			//shooting prevents arrow from moving with character
 			shooting = true;
@@ -285,11 +290,7 @@ function Hero(name, image, speed) {
 			}
 
 		}
-		else {
-			shooting = false;
-			this.stopShooting();
-		}
-
+		
 
 
 
@@ -1038,9 +1039,10 @@ function update() {
 	userPause(keysPressed);
 	robinHood.move(keysPressed);
 	robinHood.arrowMove()
+	console.log("UPDATE SHOOTING", shooting)
 	// robinHood.shoot(keysPressed);
 	robinHood.shoot(keyQueue);
-	// robinHood.arrowFollow();
+	robinHood.arrowFollow();
 	checkGameStatus(robinHood.health);
 	checkIfHighScore();
 
@@ -1107,6 +1109,10 @@ function checkGameStatus(health) {
 // need to draw the image constantly
 
 function draw() {
+	
+	// recursively call draw 
+	requestAnimationFrame(draw);
+
 	if (gameOn) {
 		update();
 	} else {
@@ -1134,7 +1140,9 @@ function draw() {
 	// Draw the thug on the page
 	// context.drawImage(thug0.image, thug0.x, thug0.y);
 
-	requestAnimationFrame(draw);
+
+
+	
 
 	for (var i = 0; i < thugArray.length; i++) {
 
