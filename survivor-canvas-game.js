@@ -160,7 +160,9 @@ function Hero(name, image, speed) {
 	this.arrowMove = function () {
 		//if the arrow is not within 10 pixels of its destination, keep it going
 		let counter = 0;
-		if (this.arrowLocation.x < this.arrowLocation.destinationX) {
+
+		
+		if (this.arrowLocation.x < this.arrowLocation.destinationX && shooting) {
 
 			console.log('shooting', shooting)
 			console.log('this.arrowLocation', this.arrowLocation)
@@ -195,8 +197,28 @@ function Hero(name, image, speed) {
 	}
 	// create a function native to the main character that allows him to move
 	this.move = function (keysPressed) {
+
+		const movementBounds = {
+			x1: 80,
+			x2: 520,
+			y1: 30,
+			y2: 390 
+		}
+
+		// don't let arrow go off map
+		if(this.arrowLocation.x > movementBounds.x2) {
+			console.log("ARROW OFF X MAP")
+			shooting = false; 
+		}
+
+		if(this.arrowLocation.x < movementBounds.x1) {
+			console.log("ARROW OFF X2 MAP")
+			shooting = false; 
+		}
+
+
 		if (37 in keysPressed) {
-			if (this.x >= 80) {
+			if (this.x >= movementBounds.x1) {
 				this.x -= 7 * this.speed;
 				// Make archer look left if he is moving left - do the same with arrow
 				this.image.src = "possible-enemies-allies/archer3-left.png";
@@ -216,12 +238,12 @@ function Hero(name, image, speed) {
 			}
 		}
 		if (38 in keysPressed) {
-			if (this.y >= 30) {
+			if (this.y >= movementBounds.y1) {
 				this.y -= 7 * this.speed;
 			}
 		}
 		if (39 in keysPressed) {
-			if (this.x <= 520) {
+			if (this.x <= movementBounds.x2) {
 				this.x += 7 * this.speed;
 				this.image.src = "possible-enemies-allies/archer3.png";
 				if (arrowDamage === 2) {
@@ -237,7 +259,7 @@ function Hero(name, image, speed) {
 			}
 		}
 		if (40 in keysPressed) {
-			if (this.y <= 390) {
+			if (this.y <= movementBounds.y2) {
 				this.y += 7 * this.speed;
 			}
 		}
