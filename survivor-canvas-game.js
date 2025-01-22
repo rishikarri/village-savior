@@ -146,7 +146,7 @@ var shooting = false;
 var arrowDamage = 1;
 function Hero(name, image, speed) {
 	this.name = name;
-	this.health = 20;
+	this.health = 4;
 	this.gold = 0;
 	this.image = new Image();
 	this.image.src = image;
@@ -1086,7 +1086,7 @@ function giveHeroFireArrows() {
 
 
 
-robinHood.gold += 2500;
+robinHood.gold += 100;
 
 
 // ----------------------------------------------------------
