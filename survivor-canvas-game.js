@@ -156,7 +156,6 @@ function Hero(name, image, speed) {
 	this.faceLeft = false;
 	this.arrowImage = new Image();
 	this.arrowImage.src = "Images/arrow-right.png";
-	// this function will follow the hero if he is not shooting
 	this.arrowMove = function () {
 		//if the arrow is not within 10 pixels of its destination, keep it going
 		let counter = 0;
@@ -184,6 +183,7 @@ function Hero(name, image, speed) {
 
 		}
 	}
+	// this function will have the arrow follow the hero if he is not shooting
 	this.arrowFollow = function () {
 		if (!shooting) {
 			if (this.faceLeft) {
@@ -377,38 +377,55 @@ function Hero(name, image, speed) {
 // ----------------------------------------------------------
 
 
+class Enemy {
+	constructor() {
 
-function Goblin(name) {
-	this.name = name;
-	this.health = 3;
-	this.image = new Image();
-	this.image.src = "possible-enemies-allies/royalty goblin.png"
-	this.speed = 1;
-	this.x = Math.random() * 440 + 40;;
-	this.y = Math.random() * 400 + 20;
-	this.destinationX = Math.random() * 440 + 40;
-	this.destinationY = Math.random() * 400 + 20;
-	this.move = function () {
-		if (Math.abs(this.x - this.destinationX) < 32) {
-			this.destinationX = Math.random() * 440 + 40;
-		} else if (this.x < this.destinationX) {
-			this.x += 2.94 * this.speed;
-			this.image.src = "possible-enemies-allies/royalty-goblin-right.png";
-		} else {
-			this.x -= 2.94 * this.speed;
-			this.image.src = "possible-enemies-allies/royalty goblin-left.png";
-		}
+	}
 
-		if (Math.abs(this.y - this.destinationY) < 32) {
-			this.destinationY = Math.random() * 400 + 20;
-		} else if (this.y > this.destinationY) {
-			this.y -= 2.94 * this.speed;
-		} else {
-			this.y += 2.94 * this.speed;
+	showHeroHurtOverlay = function() {
+		document.getElementById("hurtByEnemy").style.opacity = 1;
+			setTimeout(() => {
+				document.getElementById("hurtByEnemy").style.opacity = 0;
+			}, 200)
+	}	
+}
+
+class Goblin extends Enemy {
+	
+
+	constructor(name) {
+		super()
+		this.name = name;
+		this.health = 3;
+		this.image = new Image();
+		this.image.src = "possible-enemies-allies/royalty goblin.png"
+		this.speed = 1;
+		this.x = Math.random() * 440 + 40;;
+		this.y = Math.random() * 400 + 20;
+		this.destinationX = Math.random() * 440 + 40;
+		this.destinationY = Math.random() * 400 + 20;
+		this.move = function () {
+			if (Math.abs(this.x - this.destinationX) < 32) {
+				this.destinationX = Math.random() * 440 + 40;
+			} else if (this.x < this.destinationX) {
+				this.x += 2.94 * this.speed;
+				this.image.src = "possible-enemies-allies/royalty-goblin-right.png";
+			} else {
+				this.x -= 2.94 * this.speed;
+				this.image.src = "possible-enemies-allies/royalty goblin-left.png";
+			}
+	
+			if (Math.abs(this.y - this.destinationY) < 32) {
+				this.destinationY = Math.random() * 400 + 20;
+			} else if (this.y > this.destinationY) {
+				this.y -= 2.94 * this.speed;
+			} else {
+				this.y += 2.94 * this.speed;
+			}
 		}
 	}
 
-	this.catchRobinHood = function () {
+	catchRobinHood = function () {
 		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
 		if (
 			Math.abs((this.x - robinHood.x)) < 24
@@ -417,11 +434,12 @@ function Goblin(name) {
 			//robin hoood got hit
 			this.x = Math.random() * 440 + 40;
 			this.y = Math.random() * 400 + 20;
-			robinHood.health--;
+			robinHood.health--;						
+			
 			document.getElementById("health").innerHTML = robinHood.health;
 		}
 	}
-	this.getHitByArrow = function () {
+	getHitByArrow = function () {
 		if (
 			Math.abs(robinHood.arrowLocation.x - this.x) < 15
 			&& Math.abs(robinHood.arrowLocation.y - this.y) < 28
@@ -435,7 +453,7 @@ function Goblin(name) {
 		}
 	}
 
-	this.getHitByNinjaStar = function () {
+	getHitByNinjaStar = function () {
 		for (var i = 0; i < ninjaArray.length; i++) {
 			if (
 				Math.abs(ninjaArray[i].ninjaStarLocation.x - this.x) < 15
@@ -453,7 +471,7 @@ function Goblin(name) {
 
 
 	//changes the speed of the goblin and changes them to a coin if dead
-	this.changeSpeed = function () {
+	changeSpeed = function () {
 		if (this.health == 2) {
 			this.speed = .7;
 		} else if (this.health == 1) {
@@ -518,7 +536,6 @@ function Thug(name) {
 			&& Math.abs(this.y - robinHood.y) < 24
 		) {
 
-			// don't need the above code bedaduse you catch robinhood if you get close to him
 			//generate new location if you hit him
 			//robin hoood got hit
 			this.x = Math.random() * 440 + 40;
@@ -630,6 +647,7 @@ function Golem(name) {
 			this.x = Math.random() * 440 + 40;
 			this.y = Math.random() * 400 + 20;
 			robinHood.health--;
+			
 			document.getElementById("health").innerHTML = robinHood.health;
 		}
 

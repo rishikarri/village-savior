@@ -20,6 +20,18 @@ button {
 /* change button to ghostwhite */
 
 
+#hurtByEnemy {
+    background-color: red;
+    opacity: 0;
+    z-index: 1; /* Sit on top */
+    left: 25%;
+    top: 0;
+    height: 500px;
+    width: 700px;
+    position: absolute;
+    text-align: center;
+    
+}
 
 #top-section{
 	text-align: center;
@@ -83,6 +95,7 @@ canvas{
 
 
 #middle-section{
+    position: relative;
 	text-align: center;
 }
 
