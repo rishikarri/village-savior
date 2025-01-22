@@ -381,9 +381,8 @@ class Enemy {
 	constructor() {
 
 	}
-
 	showHeroHurtOverlay = function() {
-		document.getElementById("hurtByEnemy").style.opacity = 1;
+		document.getElementById("hurtByEnemy").style.opacity = .5;
 			setTimeout(() => {
 				document.getElementById("hurtByEnemy").style.opacity = 0;
 			}, 200)
@@ -391,8 +390,6 @@ class Enemy {
 }
 
 class Goblin extends Enemy {
-	
-
 	constructor(name) {
 		super()
 		this.name = name;
@@ -426,11 +423,13 @@ class Goblin extends Enemy {
 	}
 
 	catchRobinHood = function () {
+		
 		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
 		if (
 			Math.abs((this.x - robinHood.x)) < 24
 			&& Math.abs(this.y - robinHood.y) < 24
 		) {
+			this.showHeroHurtOverlay()
 			//robin hoood got hit
 			this.x = Math.random() * 440 + 40;
 			this.y = Math.random() * 400 + 20;
@@ -498,44 +497,47 @@ class Goblin extends Enemy {
 
 }
 
-function Thug(name) {
-
-	this.name = name;
-	this.health = 6;
-	this.image = new Image();
-	this.image.src = "possible-enemies-allies/thug.png";
-	this.speed = 1;
-	this.x = this.x = Math.random() * 440 + 40;
-	this.y = this.y = Math.random() * 400 + 20;
-	this.move = function () {
-		if (Math.abs(this.x - robinHood.x) < 18) {
-			this.catchRobinHood();
-		} else if (this.x <= robinHood.x) {
-			this.x += 2 * this.speed;
-			this.image.src = "possible-enemies-allies/thug.png";
-		} else {
-			this.x -= 2 * this.speed;
-			this.image.src = "possible-enemies-allies/thug-left.png";
-		}
-
-		if (Math.abs(this.y - robinHood.y) < 24) {
-			this.catchRobinHood();
-		} else if (this.y > robinHood.y) {
-			this.y -= 2 * this.speed;
-
-
-		} else {
-			this.y += 2 * this.speed;
+class Thug extends Enemy {
+	constructor(name) {
+		super()
+		this.name = name;
+		this.health = 6;
+		this.image = new Image();
+		this.image.src = "possible-enemies-allies/thug.png";
+		this.speed = 1;
+		this.x = this.x = Math.random() * 440 + 40;
+		this.y = this.y = Math.random() * 400 + 20;
+		this.move = function () {
+			if (Math.abs(this.x - robinHood.x) < 18) {
+				this.catchRobinHood();
+			} else if (this.x <= robinHood.x) {
+				this.x += 2 * this.speed;
+				this.image.src = "possible-enemies-allies/thug.png";
+			} else {
+				this.x -= 2 * this.speed;
+				this.image.src = "possible-enemies-allies/thug-left.png";
+			}
+	
+			if (Math.abs(this.y - robinHood.y) < 24) {
+				this.catchRobinHood();
+			} else if (this.y > robinHood.y) {
+				this.y -= 2 * this.speed;
+	
+	
+			} else {
+				this.y += 2 * this.speed;
+			}
 		}
 	}
 
-	this.catchRobinHood = function () {
+
+	catchRobinHood = function () {
 		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
 		if (
 			Math.abs((this.x - robinHood.x)) < 18
 			&& Math.abs(this.y - robinHood.y) < 24
 		) {
-
+			this.showHeroHurtOverlay();
 			//generate new location if you hit him
 			//robin hoood got hit
 			this.x = Math.random() * 440 + 40;
@@ -545,7 +547,7 @@ function Thug(name) {
 		}
 
 	}
-	this.getHitByArrow = function () {
+	getHitByArrow = function () {
 		if (
 			Math.abs(robinHood.arrowLocation.x - this.x) < 15
 			&& Math.abs(robinHood.arrowLocation.y - this.y) < 33
@@ -559,7 +561,7 @@ function Thug(name) {
 		}
 	}
 
-	this.getHitByNinjaStar = function () {
+	getHitByNinjaStar = function () {
 		for (var i = 0; i < ninjaArray.length; i++) {
 			if (
 				Math.abs(ninjaArray[i].ninjaStarLocation.x - this.x) < 15
@@ -575,7 +577,7 @@ function Thug(name) {
 		}
 	}
 	//changes the speed of the goblin and changes them to a coin if dead
-	this.changeSpeed = function () {
+	changeSpeed = function () {
 		if (this.health == 5) {
 			this.speed = .7;
 		} else if (this.health == 3) {
