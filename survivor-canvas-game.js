@@ -122,6 +122,7 @@ function openShop(){
 // CREATE EVENT LISTENERS
 
 var keysPressed = []; //array that holds whats in the array
+const keyQueue = []
 var displayGold;//need to define out here for global scope 
 
 addEventListener("keyup", function(event){
@@ -129,6 +130,11 @@ addEventListener("keyup", function(event){
 })
 //anonymous functions to pass moveRobinhood commands 
 addEventListener("keydown", function(event){
+	if (event.keyCode === 65 || event.keyCode === 68 )
+	
+	keyQueue.push(event.keyCode)
+	console.log('keyQueue', keyQueue)
+	
 	keysPressed[event.keyCode] = true; //this position of the array has a position of true
 })
 
@@ -225,11 +231,15 @@ function Hero(name, image, speed){
 			this.stopShooting();
 		}else{
 
-			 if(68 in keysPressed){
+			 if(68 in keyQueue){
 			//shooting prevents arrow from moving with character
 			shooting = true;
 			// if the spacebar is hit, shoot the arrow 50 pixels right, user can hold it to make it go farther
-			this.arrowLocation.destinationX = this.arrowLocation.x + 50; 
+			let addDistanceCounter = 1; 
+			while (addDistanceCounter < 5) {
+				addDistanceCounter++; 	
+				this.arrowLocation.destinationX = this.arrowLocation.x + 50; 
+			}
 			
 			// change image source and make sure the character is facing right
 			this.image.src = "possible-enemies-allies/archer3.png";
@@ -240,7 +250,7 @@ function Hero(name, image, speed){
 					this.arrowImage.src = "Images/arrow-right.png";	
 			}
 
-		}else if(65 in keysPressed){
+		}else if(65 in keyQueue){
 			shooting = true;
 			this.arrowLocation.destinationX = this.arrowLocation.x - 50; 
 			
