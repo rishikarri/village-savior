@@ -172,6 +172,17 @@ function Hero(name, image, speed) {
 
 
 		}
+
+		if (this.arrowLocation.x > this.arrowLocation.destinationX && shooting) {
+
+			console.log('shooting', shooting)
+			console.log('this.arrowLocation', this.arrowLocation)
+			this.arrowLocation.x -= 6;
+			const a = this.arrowLocation.x -= 6;
+			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
+
+
+		}
 	}
 	this.arrowFollow = function () {
 		if (!shooting) {
@@ -299,6 +310,23 @@ function Hero(name, image, speed) {
 					this.arrowImage.src = "Images/flaming-arrow2.png";
 				} else {
 					this.arrowImage.src = "Images/arrow-right.png";
+				}
+
+			}
+
+			if (keyPressed == aKey) {
+				shooting = true;
+				this.arrowLocation.destinationX = this.arrowLocation.x - 400;
+
+
+				// change the image source and make sure the character is shooting left
+				this.image.src = "possible-enemies-allies/archer3-left.png";
+				this.faceLeft = true;
+
+				if (arrowDamage == 2) {
+					this.arrowImage.src = "Images/flaming-arrow2 left.png"
+				} else {
+					this.arrowImage.src = "Images/arrow-left.png";
 				}
 
 			}
