@@ -161,7 +161,7 @@ function Hero(name, image, speed) {
 		//if the arrow is not within 10 pixels of its destination, keep it going
 		let counter = 0;
 
-		
+
 		if (this.arrowLocation.x < this.arrowLocation.destinationX && shooting) {
 
 			console.log('shooting', shooting)
@@ -170,7 +170,7 @@ function Hero(name, image, speed) {
 			const a = this.arrowLocation.x += 6;
 			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
 
-			
+
 		}
 	}
 	this.arrowFollow = function () {
@@ -179,8 +179,8 @@ function Hero(name, image, speed) {
 				this.arrowLocation.x = this.x - 4;
 				this.arrowLocation.y = this.y + 18;
 
-			} 
-			
+			}
+
 			if (!this.faceLeft) {
 				this.arrowLocation.x = this.x + 22;
 				this.arrowLocation.y = this.y + 18;
@@ -202,18 +202,18 @@ function Hero(name, image, speed) {
 			x1: 80,
 			x2: 520,
 			y1: 30,
-			y2: 390 
+			y2: 390
 		}
 
 		// don't let arrow go off map
-		if(this.arrowLocation.x > movementBounds.x2) {
+		if (this.arrowLocation.x > movementBounds.x2) {
 			console.log("ARROW OFF X MAP")
-			shooting = false; 
+			shooting = false;
 		}
 
-		if(this.arrowLocation.x < movementBounds.x1) {
+		if (this.arrowLocation.x < movementBounds.x1) {
 			console.log("ARROW OFF X2 MAP")
-			shooting = false; 
+			shooting = false;
 		}
 
 
@@ -230,7 +230,7 @@ function Hero(name, image, speed) {
 				}
 
 				if (!shooting) {
-					this.arrowLocation.x = this.x - 4; 
+					this.arrowLocation.x = this.x - 4;
 					this.arrowLocation.y = this.y + 18;
 				}
 				this.faceLeft = true;
@@ -272,33 +272,42 @@ function Hero(name, image, speed) {
 		// 	this.stopShooting();
 		// }
 
-		if (keyQueue.indexOf(68) !== -1) {
-			keyQueue.pop()
-			console.log('shooting function')
-			//shooting prevents arrow from moving with character
-			shooting = true;
-			// if the spacebar is hit, shoot the arrow 50 pixels right, user can hold it to make it go farther
-			let addDistanceCounter = 1;
+		if (keyQueue.length > 0) {
 
-			this.arrowLocation.destinationX = this.arrowLocation.x + 200;
+			const dKey = 68
+			const aKey = 65
 
-			console.log('this.arrowLocation', this.arrowLocation)
+			const keyPressed = keyQueue.pop()
+
+			console.log(keyPressed, 'keypressed')
+			if (keyPressed == dKey) {
+				console.log('shooting function')
+				//shooting prevents arrow from moving with character
+				shooting = true;
+				// if the spacebar is hit, shoot the arrow 50 pixels right, user can hold it to make it go farther
+				let addDistanceCounter = 1;
+
+				this.arrowLocation.destinationX = this.arrowLocation.x + 450;
+
+				console.log('this.arrowLocation', this.arrowLocation)
 
 
-			// change image source and make sure the character is facing right
-			this.image.src = "possible-enemies-allies/archer3.png";
-			this.faceLeft = false;
-			if (arrowDamage === 2) {
-				this.arrowImage.src = "Images/flaming-arrow2.png";
-			} else {
-				this.arrowImage.src = "Images/arrow-right.png";
+				// change image source and make sure the character is facing right
+				this.image.src = "possible-enemies-allies/archer3.png";
+				this.faceLeft = false;
+				if (arrowDamage === 2) {
+					this.arrowImage.src = "Images/flaming-arrow2.png";
+				} else {
+					this.arrowImage.src = "Images/arrow-right.png";
+				}
+
 			}
 
 		}
 
-		if (65 in keyQueue) {
+		if (keyQueue.indexOf(65) !== -1) {
 			shooting = true;
-			this.arrowLocation.destinationX = this.arrowLocation.x - 50;
+			this.arrowLocation.destinationX = this.arrowLocation.x - 200;
 
 
 			// change the image source and make sure the character is shooting left
@@ -312,7 +321,7 @@ function Hero(name, image, speed) {
 			}
 
 		}
-		
+
 
 
 
@@ -1131,7 +1140,7 @@ function checkGameStatus(health) {
 // need to draw the image constantly
 
 function draw() {
-	
+
 	// recursively call draw 
 	requestAnimationFrame(draw);
 
@@ -1164,7 +1173,7 @@ function draw() {
 
 
 
-	
+
 
 	for (var i = 0; i < thugArray.length; i++) {
 
