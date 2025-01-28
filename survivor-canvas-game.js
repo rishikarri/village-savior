@@ -108,25 +108,33 @@ function startGame() {
 
 
 function userPause() {
-	if (32 in keysPressed) {
-		pauseGame();
-	}
+	// if (32 in keysPressed) {
+	// 	togglePause();
+	// }
 }
 
+let gamePaused = false; // Flag to track pause state
+const pauseResumeButton = document.getElementById('pause-resume-button');
+function togglePause() {
+    gamePaused = !gamePaused; // Toggle the pause state
 
+    if (gamePaused) {
+      pauseResumeButton.textContent = "Resume";
+      pauseGame(); // Call your pause game function
+    } else {
+      pauseResumeButton.textContent = "Pause";
+      resumeGame(); // Call your resume game function
+    }
+  }
 function pauseGame() {
 	gameOn = false;
 	monsterIntervalManager(true);
-	enableButton("resume-button");
 }
 
-// disable resume button from teh start
-disableButton("resume-button");
 function resumeGame() {
 	gameOn = true;
 	counterInterval = setInterval(updateCounter, 1000); //update the counter every second
 	monsterIntervalManager(false);
-	disableButton("resume-button");
 	// var goblinInterval = setInterval(generateGoblinNumber, 5000);
 	// var golemInterval = setInterval(generateGolemNumber, 35000);
 	// var thugInterval = setInterval(generateThugNumber, 7000);
@@ -136,7 +144,6 @@ function openShop() {
 	// pause ggame so it's not running in the background
 	gameOn = false;
 	monsterIntervalManager(false);
-	enableButton("resume-button");
 
 }
 
@@ -796,7 +803,7 @@ class Golem extends Enemy {
 
 			// change image source to nothing and increase gold
 			this.image.src = "";
-			robinHood.gold += 40;
+			robinHood.gold += 200;
 			document.getElementById("gold-collected").innerHTML = robinHood.gold;
 
 			//display the amount of gold Collected for 2 seconds
@@ -1286,8 +1293,7 @@ function checkGameStatus(health) {
 		gameOn = false;
 		document.getElementById("textDisplay").innerHTML = "GAME OVER";
 		monsterIntervalManager(true);
-		disableButton("pause-button");
-		disableButton("resume-button");
+		disableButton("pause-resume-button");
 		disableButton("open-shop-button");
 	}
 }
