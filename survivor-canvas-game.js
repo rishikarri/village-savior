@@ -2,6 +2,7 @@
 var canvas = document.createElement("canvas");
 var context = canvas.getContext("2d");
 
+
 // set the canvas height and width 
 canvas.width = 675;
 canvas.height = 480;
@@ -40,6 +41,8 @@ function deleteObjectByKey(obj, keyToDelete) {
 	return false; // Indicate that the key was not found
 }
 
+
+  
 
 
 
@@ -269,6 +272,7 @@ function Hero(name, image, speed) {
 		// 	this.stopShooting();
 		// }
 
+
 		if (keyQueue.length > 0) {
 
 			const dKey = 68
@@ -347,6 +351,7 @@ function Hero(name, image, speed) {
 
 		}
 	}
+	// this.shoot = throttle(this._shoot.bind(this), 500);
 
 
 }
@@ -374,7 +379,7 @@ class Arrow {
 	}
 
 	arrowMove = function () {
-		if (this.hitEnemy) return; 
+		if (this.hitEnemy) return;
 		//if the arrow is not within 10 pixels of its destination, keep it going
 		const movementBounds = {
 			x1: 70,
@@ -438,7 +443,7 @@ class Goblin extends Enemy {
 	constructor(name) {
 		super()
 		this.name = name;
-		this.health = 3;
+		this.health = 6;
 		this.image = new Image();
 		this.image.src = "possible-enemies-allies/royalty goblin.png"
 		this.speed = 1;
@@ -495,7 +500,7 @@ class Goblin extends Enemy {
 			) {
 				if (!currentArrow.hitEnemy) {
 					this.health -= arrowDamage;
-					currentArrow.hitEnemy = true; 
+					currentArrow.hitEnemy = true;
 					deleteObjectByKey(arrows, this.id);
 					this.changeSpeed();
 				}
@@ -554,7 +559,7 @@ class Thug extends Enemy {
 	constructor(name) {
 		super()
 		this.name = name;
-		this.health = 6;
+		this.health = 12;
 		this.image = new Image();
 		this.image.src = "possible-enemies-allies/thug.png";
 		this.speed = 1;
@@ -613,7 +618,7 @@ class Thug extends Enemy {
 			) {
 				if (!currentArrow.hitEnemy) {
 					this.health -= arrowDamage;
-					currentArrow.hitEnemy = true; 
+					currentArrow.hitEnemy = true;
 					deleteObjectByKey(arrows, this.id);
 					this.changeSpeed();
 				}
@@ -675,7 +680,7 @@ class Golem extends Enemy {
 	constructor(name) {
 		super()
 		this.name = name;
-		this.health = 80;
+		this.health = 120;
 		this.image = new Image();
 		this.image.src = "possible-enemies-allies/golem1.png";
 		this.speed = 1.2;
@@ -732,7 +737,7 @@ class Golem extends Enemy {
 			) {
 				if (!currentArrow.hitEnemy) {
 					this.health -= arrowDamage;
-					currentArrow.hitEnemy = true; 
+					currentArrow.hitEnemy = true;
 					deleteObjectByKey(arrows, this.id);
 					this.changeSpeed();
 				}
@@ -741,7 +746,7 @@ class Golem extends Enemy {
 		}
 
 	}
-	
+
 	getHitByNinjaStar = function () {
 
 		for (var i = 0; i < ninjaArray.length; i++) {
