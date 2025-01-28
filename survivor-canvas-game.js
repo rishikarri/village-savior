@@ -45,8 +45,7 @@ function deleteObjectByKey(obj, keyToDelete) {
   
 
 
-
-
+let useFireArrows = false; 
 var score = 0;
 
 counterInterval = setInterval(updateCounter, 1000);
@@ -169,7 +168,7 @@ addEventListener("keydown", function (event) {
 var arrowDamage = 1;
 function Hero(name, image, speed) {
 	this.name = name;
-	this.health = 20;
+	this.health = 8;
 	this.gold = 0;
 	this.image = new Image();
 	this.image.src = image;
@@ -367,8 +366,19 @@ class Arrow {
 		this.image.src = "Images/arrow-right.png";
 		this.hitEnemy = false;
 		this.arrowDirection = arrowDirection;
-		if (arrowDirection === "LEFT") {
-			this.image.src = "Images/arrow-left.png"; // Image for left direction
+		if (useFireArrows) {
+			console.log("FIRE ARROW")
+			if (arrowDirection === "LEFT") {
+				this.image.src = "Images/flaming-arrow2 left.png"
+			} 
+			if (arrowDirection === 'RIGHT') {
+				this.image.src = "Images/flaming-arrow2.png"
+			}
+
+		} else {
+			if (arrowDirection === "LEFT") {
+				this.image.src = "Images/arrow-left.png"; // Image for left direction
+			}
 		}
 
 
@@ -1169,6 +1179,7 @@ function drinkSpeedPotion() {
 function giveHeroFireArrows() {
 	// increase arrow damage to 2
 	arrowDamage = 2;
+	useFireArrows = true;
 	//change arrow image source to fire arrows - logic above is already chagned
 	if (robinHood.faceLeft === true) {
 		robinHood.arrowImage.src = "Images/flaming-arrow2 left.png"
@@ -1194,7 +1205,7 @@ function giveHeroFireArrows() {
 
 
 
-robinHood.gold += 100;
+robinHood.gold += 1000;
 
 
 // ----------------------------------------------------------
