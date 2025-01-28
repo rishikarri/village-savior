@@ -19,16 +19,27 @@ backgroundImage.src = "Images/background2.jpeg";
 // ----------------Administrative Section, Instructions------
 // ----------------------------------------------------------
 
+// HELPER FUNCTIONS 
+
 function generateUniqueId() {
 	// Generate a random string using a combination of characters
 	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	let result = '';
-	for (let i = 0; i < 16; i++) { 
-	  result += chars.charAt(Math.floor(Math.random() * chars.length));
+	for (let i = 0; i < 16; i++) {
+		result += chars.charAt(Math.floor(Math.random() * chars.length));
 	}
 	return result;
-  }
-  
+}
+
+
+function deleteObjectByKey(obj, keyToDelete) {
+	if (obj.hasOwnProperty(keyToDelete)) {
+		delete obj[keyToDelete];
+		return true; // Indicate successful deletion
+	}
+	return false; // Indicate that the key was not found
+}
+
 
 
 
@@ -305,7 +316,7 @@ function Hero(name, image, speed) {
 
 			if (keyPressed == aKey) {
 
-				
+
 				shooting = true;
 				this.arrowLocation.destinationX = this.arrowLocation.x - 400;
 
@@ -374,8 +385,8 @@ class Arrow {
 		this.arrowDirection = arrowDirection;
 		if (arrowDirection === "LEFT") {
 			this.image.src = "Images/arrow-left.png"; // Image for left direction
-		} 
-		
+		}
+
 
 		this.arrowLocation = {
 			x,
@@ -396,11 +407,14 @@ class Arrow {
 		// don't let arrow go off map
 		if (this.arrowLocation.x > movementBounds.x2) {
 			console.log("ARROW OFF X MAP")
-			// TODO: add logic to remove arrow from lookup
+
+			deleteObjectByKey(arrows, this.id)
+			console.log('arrows delete', arrows)
 		}
 
 		if (this.arrowLocation.x < movementBounds.x1) {
 			console.log("ARROW OFF X2 MAP")
+			deleteObjectByKey(arrows, this.id)
 		}
 
 		if (this.arrowLocation.x < this.arrowLocation.destinationX) {
@@ -435,12 +449,12 @@ class Enemy {
 	constructor() {
 
 	}
-	showHeroHurtOverlay = function() {
+	showHeroHurtOverlay = function () {
 		document.getElementById("hurtByEnemy").style.opacity = .5;
-			setTimeout(() => {
-				document.getElementById("hurtByEnemy").style.opacity = 0;
-			}, 200)
-	}	
+		setTimeout(() => {
+			document.getElementById("hurtByEnemy").style.opacity = 0;
+		}, 200)
+	}
 }
 
 class Goblin extends Enemy {
@@ -465,7 +479,7 @@ class Goblin extends Enemy {
 				this.x -= 2.94 * this.speed;
 				this.image.src = "possible-enemies-allies/royalty goblin-left.png";
 			}
-	
+
 			if (Math.abs(this.y - this.destinationY) < 32) {
 				this.destinationY = Math.random() * 400 + 20;
 			} else if (this.y > this.destinationY) {
@@ -477,7 +491,7 @@ class Goblin extends Enemy {
 	}
 
 	catchRobinHood = function () {
-		
+
 		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
 		if (
 			Math.abs((this.x - robinHood.x)) < 24
@@ -487,8 +501,8 @@ class Goblin extends Enemy {
 			//robin hoood got hit
 			this.x = Math.random() * 440 + 40;
 			this.y = Math.random() * 400 + 20;
-			robinHood.health--;						
-			
+			robinHood.health--;
+
 			document.getElementById("health").innerHTML = robinHood.health;
 		}
 	}
@@ -571,13 +585,13 @@ class Thug extends Enemy {
 				this.x -= 2 * this.speed;
 				this.image.src = "possible-enemies-allies/thug-left.png";
 			}
-	
+
 			if (Math.abs(this.y - robinHood.y) < 24) {
 				this.catchRobinHood();
 			} else if (this.y > robinHood.y) {
 				this.y -= 2 * this.speed;
-	
-	
+
+
 			} else {
 				this.y += 2 * this.speed;
 			}
@@ -683,7 +697,7 @@ class Golem extends Enemy {
 				this.x -= 1.3 * this.speed;
 				this.image.src = "possible-enemies-allies/golem-face-left.png";
 			}
-	
+
 			if (Math.abs(this.y - robinHood.y) < 32) {
 				this.catchRobinHood();
 			} else if (this.y > robinHood.y) {
@@ -706,7 +720,7 @@ class Golem extends Enemy {
 			this.x = Math.random() * 440 + 40;
 			this.y = Math.random() * 400 + 20;
 			robinHood.health--;
-			
+
 			document.getElementById("health").innerHTML = robinHood.health;
 		}
 
@@ -1189,7 +1203,7 @@ function update() {
 	for (const key in arrows) {
 
 		arrows[key].arrowMove()
-	  }
+	}
 
 	for (var i = 0; i < ninjaArray.length; i++) {
 		ninjaArray[i].move();
@@ -1270,7 +1284,7 @@ function draw() {
 
 	console.log('robinhood.arrowlocation', robinHood.arrowLocation)
 	// context.drawImage(robinHood.arrowImage, robinHood.arrowLocation.x, robinHood.arrowLocation.y);
-	
+
 
 	// draw arrows on the screen
 	// let logCount = 0
@@ -1285,24 +1299,24 @@ function draw() {
 
 	for (const arrowKey in arrows) {
 		currentArrow = arrows[arrowKey]
-		
+
 		// console.log(currentArrow, 'current Arrow image')
 		context.drawImage(currentArrow.image, currentArrow.arrowLocation.x, currentArrow.arrowLocation.y);
-	  }
-	
+	}
+
 	//a for loop that draws and moves all the goblins in the arrray
 	for (var i = 0; i < goblinArray.length; i++) {
 
 		if (goblinArray[i].health > 0) {
 			context.drawImage(goblinArray[i].image, goblinArray[i].x, goblinArray[i].y);
-		} 
+		}
 	}
 	// Draw the thug on the page
 
 	for (var i = 0; i < thugArray.length; i++) {
 		if (thugArray[i].health > 0) {
 			context.drawImage(thugArray[i].image, thugArray[i].x, thugArray[i].y);
-		} 
+		}
 	}
 
 	for (var i = 0; i < golemArray.length; i++) {
@@ -1310,7 +1324,7 @@ function draw() {
 		if (golemArray[i].health > 0) {
 			context.drawImage(golemArray[i].image, golemArray[i].x, golemArray[i].y);
 
-		} 
+		}
 	}
 
 	// drawing ninjas on the screen in addition to each one of their ninja star locations
