@@ -281,15 +281,15 @@ function Hero(name, image, speed) {
 				let addDistanceCounter = 1;
 
 				const arrowId = generateUniqueId();
-				const newArrow = new Arrow(arrowId, robinHood.x, robinHood.y, robinHood.x + 450)
+				const newArrow = new Arrow(arrowId, robinHood.x, robinHood.y, robinHood.x + 450, 'RIGHT')
 
 				arrows[arrowId] = newArrow
 
 				console.log('arrows', arrows)
 
-				this.arrowLocation.destinationX = this.arrowLocation.x + 450;
+				// this.arrowLocation.destinationX = this.arrowLocation.x + 450;
 
-				console.log('this.arrowLocation', this.arrowLocation)
+				// console.log('this.arrowLocation', this.arrowLocation)
 
 
 				// change image source and make sure the character is facing right
@@ -304,6 +304,8 @@ function Hero(name, image, speed) {
 			}
 
 			if (keyPressed == aKey) {
+
+				
 				shooting = true;
 				this.arrowLocation.destinationX = this.arrowLocation.x - 400;
 
@@ -365,10 +367,16 @@ const arrows = {
 
 };
 class Arrow {
-	constructor(id, x, y, destinationX) {
+	constructor(id, x, y, destinationX, arrowDirection) {
+		this.id = id;
 		this.image = new Image();
 		this.image.src = "Images/arrow-right.png";
-		this.id = id;
+		this.arrowDirection = arrowDirection;
+		if (arrowDirection === "LEFT") {
+			this.image.src = "Images/arrow-left.png"; // Image for left direction
+		} 
+		
+
 		this.arrowLocation = {
 			x,
 			y,
@@ -1261,7 +1269,7 @@ function draw() {
 	context.drawImage(robinHood.image, robinHood.x, robinHood.y);
 
 	console.log('robinhood.arrowlocation', robinHood.arrowLocation)
-	context.drawImage(robinHood.arrowImage, robinHood.arrowLocation.x, robinHood.arrowLocation.y);
+	// context.drawImage(robinHood.arrowImage, robinHood.arrowLocation.x, robinHood.arrowLocation.y);
 	
 
 	// draw arrows on the screen
