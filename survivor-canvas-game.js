@@ -366,8 +366,8 @@ const arrows = {
 };
 class Arrow {
 	constructor(id, x, y, destinationX) {
-		this.arrowImage = new Image();
-		this.arrowImage.src = "Images/arrow-right.png";
+		this.image = new Image();
+		this.image.src = "Images/arrow-right.png";
 		this.id = id;
 		this.arrowLocation = {
 			x,
@@ -1272,6 +1272,15 @@ function draw() {
 	// 	}
 	// 	context.drawImage(arrow.image, arrow.arrowLocation.x, arrow.arrowLocation.y);
 	// });
+
+	let currentArrow;
+
+	for (const arrowKey in arrows) {
+		currentArrow = arrows[arrowKey]
+		
+		console.log(currentArrow, 'current Arrow image')
+		context.drawImage(currentArrow.image, currentArrow.arrowLocation.x, currentArrow.arrowLocation.y);
+	  }
 	
 	//a for loop that draws and moves all the goblins in the arrray
 	for (var i = 0; i < goblinArray.length; i++) {
