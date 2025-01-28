@@ -104,6 +104,7 @@ function startGame() {
 	//set hero's health to 20  when the game starts
 	// refresh teh page to start a new game
 	location.reload();
+	viewInstructions()
 }
 
 
@@ -1045,10 +1046,17 @@ function viewInstructions() {
 }
 
 closeInstructions.onclick = function () {
+	resumeGame()
 	modalInstructions.style.display = "none";
 }
 
-//ask rob
+const startGameButton = document.getElementById('start-game-button');
+
+  startGameButton.addEventListener('click', function() {
+    resumeGame()
+	modalInstructions.style.display = "none";
+  });
+
 window.onclick = function (event) {
 	if (event.target == modalInstructions) {
 		modalInstructions.style.display = "none";
@@ -1345,6 +1353,7 @@ function draw() {
 
 }
 //
+viewInstructions()
 draw();
 
 
