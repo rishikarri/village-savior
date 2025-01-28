@@ -162,7 +162,6 @@ addEventListener("keydown", function (event) {
 //
 
 //create a Hero constructor - takes in a name and an image to create a new one, for now we will only create one
-var shooting = false;
 var arrowDamage = 1;
 function Hero(name, image, speed) {
 	this.name = name;
@@ -178,18 +177,16 @@ function Hero(name, image, speed) {
 	this.arrowImage.src = "Images/arrow-right.png";
 	// this function will have the arrow follow the hero if he is not shooting
 	this.arrowFollow = function () {
-		if (!shooting) {
-			if (this.faceLeft) {
-				this.arrowLocation.x = this.x - 4;
-				this.arrowLocation.y = this.y + 18;
+		if (this.faceLeft) {
+			this.arrowLocation.x = this.x - 4;
+			this.arrowLocation.y = this.y + 18;
 
-			}
+		}
 
-			if (!this.faceLeft) {
-				this.arrowLocation.x = this.x + 22;
-				this.arrowLocation.y = this.y + 18;
+		if (!this.faceLeft) {
+			this.arrowLocation.x = this.x + 22;
+			this.arrowLocation.y = this.y + 18;
 
-			}
 		}
 	}
 
@@ -212,12 +209,10 @@ function Hero(name, image, speed) {
 		// don't let arrow go off map
 		if (this.arrowLocation.x > movementBounds.x2) {
 			console.log("ARROW OFF X MAP")
-			shooting = false;
 		}
 
 		if (this.arrowLocation.x < movementBounds.x1) {
 			console.log("ARROW OFF X2 MAP")
-			shooting = false;
 		}
 
 
@@ -233,10 +228,8 @@ function Hero(name, image, speed) {
 					this.arrowImage.src = "Images/arrow-left.png";
 				}
 
-				if (!shooting) {
-					this.arrowLocation.x = this.x - 4;
-					this.arrowLocation.y = this.y + 18;
-				}
+				this.arrowLocation.x = this.x - 4;
+				this.arrowLocation.y = this.y + 18;
 				this.faceLeft = true;
 
 			}
@@ -287,7 +280,6 @@ function Hero(name, image, speed) {
 			if (keyPressed == dKey) {
 				console.log('shooting function')
 				//shooting prevents arrow from moving with character
-				shooting = true;
 				// if the spacebar is hit, shoot the arrow 50 pixels right, user can hold it to make it go farther
 				let addDistanceCounter = 1;
 
@@ -317,7 +309,6 @@ function Hero(name, image, speed) {
 			if (keyPressed == aKey) {
 
 
-				shooting = true;
 
 				const arrowId = generateUniqueId();
 				const newArrow = new Arrow(arrowId, robinHood.x - 4, robinHood.y + 18, robinHood.x - 450, 'LEFT')
@@ -341,7 +332,6 @@ function Hero(name, image, speed) {
 		}
 
 		if (keyQueue.indexOf(65) !== -1) {
-			shooting = true;
 			this.arrowLocation.destinationX = this.arrowLocation.x - 200;
 
 
@@ -356,26 +346,8 @@ function Hero(name, image, speed) {
 			}
 
 		}
-
-
-
-
-
-
-		// if the arrow is within 10 pixels of its destination stop it
-		if (Math.abs(this.arrowLocation.x - this.arrowLocation.destinationX) < 10) {
-			this.stopShooting();
-		}
-
-
-
 	}
-	//when this is called, stop shooting and return the arrow to robinhood
-	this.stopShooting = function () {
-		// stop robinhood from shooting and return the arrow to teh character
-		// shooting = false;
-		// this.arrowFollow();
-	}
+
 
 }
 
@@ -387,6 +359,7 @@ class Arrow {
 		this.id = id;
 		this.image = new Image();
 		this.image.src = "Images/arrow-right.png";
+		this.hitEnemy = false;
 		this.arrowDirection = arrowDirection;
 		if (arrowDirection === "LEFT") {
 			this.image.src = "Images/arrow-left.png"; // Image for left direction
@@ -401,9 +374,10 @@ class Arrow {
 	}
 
 	arrowMove = function () {
+		if (this.hitEnemy) return; 
 		//if the arrow is not within 10 pixels of its destination, keep it going
 		const movementBounds = {
-			x1: 80,
+			x1: 70,
 			x2: 520,
 			y1: 30,
 			y2: 390
@@ -424,7 +398,6 @@ class Arrow {
 
 		if (this.arrowLocation.x < this.arrowLocation.destinationX && this.arrowDirection === 'RIGHT') {
 
-			console.log('shooting new arrow function', shooting)
 			console.log('this.arrowLocation', this.arrowLocation)
 			this.arrowLocation.x += 6;
 			const a = this.arrowLocation.x += 6;
@@ -435,7 +408,6 @@ class Arrow {
 
 		if (this.arrowLocation.x > this.arrowLocation.destinationX && this.arrowDirection === 'LEFT') {
 
-			console.log('shooting', shooting)
 			console.log('this.arrowLocation', this.arrowLocation)
 			this.arrowLocation.x -= 6;
 			const a = this.arrowLocation.x -= 6;
@@ -512,17 +484,25 @@ class Goblin extends Enemy {
 		}
 	}
 	getHitByArrow = function () {
-		if (
-			Math.abs(robinHood.arrowLocation.x - this.x) < 15
-			&& Math.abs(robinHood.arrowLocation.y - this.y) < 28
-			&& shooting === true
-		) {
-			// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-			this.health -= arrowDamage;
-			shooting = false;
-			robinHood.stopShooting();
-			this.changeSpeed();
+		let currentArrow;
+		for (const key in arrows) {
+
+			currentArrow = arrows[key]
+
+			if (
+				Math.abs(currentArrow.arrowLocation.x - this.x) < 15
+				&& Math.abs(currentArrow.arrowLocation.y - this.y) < 28
+			) {
+				if (!currentArrow.hitEnemy) {
+					this.health -= arrowDamage;
+					currentArrow.hitEnemy = true; 
+					deleteObjectByKey(arrows, this.id);
+					this.changeSpeed();
+				}
+				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
+			}
 		}
+
 	}
 
 	getHitByNinjaStar = function () {
@@ -620,18 +600,27 @@ class Thug extends Enemy {
 		}
 
 	}
+
 	getHitByArrow = function () {
-		if (
-			Math.abs(robinHood.arrowLocation.x - this.x) < 15
-			&& Math.abs(robinHood.arrowLocation.y - this.y) < 33
-			&& shooting === true
-		) {
-			// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-			this.health -= arrowDamage;
-			shooting = false;
-			robinHood.stopShooting();
-			this.changeSpeed();
+		let currentArrow;
+		for (const key in arrows) {
+
+			currentArrow = arrows[key]
+
+			if (
+				Math.abs(currentArrow.arrowLocation.x - this.x) < 15
+				&& Math.abs(currentArrow.arrowLocation.y - this.y) < 28
+			) {
+				if (!currentArrow.hitEnemy) {
+					this.health -= arrowDamage;
+					currentArrow.hitEnemy = true; 
+					deleteObjectByKey(arrows, this.id);
+					this.changeSpeed();
+				}
+				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
+			}
 		}
+
 	}
 
 	getHitByNinjaStar = function () {
@@ -734,12 +723,10 @@ class Golem extends Enemy {
 		if (
 			Math.abs(robinHood.arrowLocation.x - this.x) < 30
 			&& Math.abs(robinHood.arrowLocation.y - this.y) < 70
-			&& shooting === true
+
 		) {
 			// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
 			this.health -= arrowDamage;
-			shooting = false;
-			robinHood.stopShooting();
 			this.changeSpeed();
 		}
 	}
@@ -1195,7 +1182,6 @@ function update() {
 	userPause(keysPressed);
 	robinHood.move(keysPressed);
 	// robinHood.arrowMove()
-	console.log("UPDATE SHOOTING", shooting)
 	// robinHood.shoot(keysPressed);
 	robinHood.shoot(keyQueue);
 	robinHood.arrowFollow();
@@ -1306,7 +1292,9 @@ function draw() {
 		currentArrow = arrows[arrowKey]
 
 		// console.log(currentArrow, 'current Arrow image')
-		context.drawImage(currentArrow.image, currentArrow.arrowLocation.x, currentArrow.arrowLocation.y);
+		if (!currentArrow.hitEnemy) {
+			context.drawImage(currentArrow.image, currentArrow.arrowLocation.x, currentArrow.arrowLocation.y);
+		}
 	}
 
 	//a for loop that draws and moves all the goblins in the arrray
