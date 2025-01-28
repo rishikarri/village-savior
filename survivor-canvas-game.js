@@ -678,7 +678,7 @@ class Golem extends Enemy {
 		this.health = 80;
 		this.image = new Image();
 		this.image.src = "possible-enemies-allies/golem1.png";
-		this.speed = 1;
+		this.speed = 1.2;
 		this.x = 300;
 		this.y = 200;
 		this.move = function () {
@@ -719,18 +719,29 @@ class Golem extends Enemy {
 		}
 
 	}
+
 	getHitByArrow = function () {
-		if (
-			Math.abs(robinHood.arrowLocation.x - this.x) < 30
-			&& Math.abs(robinHood.arrowLocation.y - this.y) < 70
+		let currentArrow;
+		for (const key in arrows) {
 
-		) {
-			// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-			this.health -= arrowDamage;
-			this.changeSpeed();
+			currentArrow = arrows[key]
+
+			if (
+				Math.abs(currentArrow.arrowLocation.x - this.x) < 30
+				&& Math.abs(currentArrow.arrowLocation.y - this.y) < 70
+			) {
+				if (!currentArrow.hitEnemy) {
+					this.health -= arrowDamage;
+					currentArrow.hitEnemy = true; 
+					deleteObjectByKey(arrows, this.id);
+					this.changeSpeed();
+				}
+				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
+			}
 		}
-	}
 
+	}
+	
 	getHitByNinjaStar = function () {
 
 		for (var i = 0; i < ninjaArray.length; i++) {
