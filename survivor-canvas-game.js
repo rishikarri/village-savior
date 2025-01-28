@@ -2,6 +2,7 @@
 var canvas = document.createElement("canvas");
 var context = canvas.getContext("2d");
 
+
 // set the canvas height and width 
 canvas.width = 675;
 canvas.height = 480;
@@ -19,7 +20,29 @@ backgroundImage.src = "Images/background2.jpeg";
 // ----------------Administrative Section, Instructions------
 // ----------------------------------------------------------
 
+// HELPER FUNCTIONS 
 
+function generateUniqueId() {
+	// Generate a random string using a combination of characters
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	for (let i = 0; i < 16; i++) {
+		result += chars.charAt(Math.floor(Math.random() * chars.length));
+	}
+	return result;
+}
+
+
+function deleteObjectByKey(obj, keyToDelete) {
+	if (obj.hasOwnProperty(keyToDelete)) {
+		delete obj[keyToDelete];
+		return true; // Indicate successful deletion
+	}
+	return false; // Indicate that the key was not found
+}
+
+
+  
 
 
 
@@ -142,7 +165,6 @@ addEventListener("keydown", function (event) {
 //
 
 //create a Hero constructor - takes in a name and an image to create a new one, for now we will only create one
-var shooting = false;
 var arrowDamage = 1;
 function Hero(name, image, speed) {
 	this.name = name;
@@ -156,47 +178,18 @@ function Hero(name, image, speed) {
 	this.faceLeft = false;
 	this.arrowImage = new Image();
 	this.arrowImage.src = "Images/arrow-right.png";
-	this.arrowMove = function () {
-		//if the arrow is not within 10 pixels of its destination, keep it going
-		let counter = 0;
-
-
-		if (this.arrowLocation.x < this.arrowLocation.destinationX && shooting) {
-
-			console.log('shooting', shooting)
-			console.log('this.arrowLocation', this.arrowLocation)
-			this.arrowLocation.x += 6;
-			const a = this.arrowLocation.x += 6;
-			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
-
-
-		}
-
-		if (this.arrowLocation.x > this.arrowLocation.destinationX && shooting) {
-
-			console.log('shooting', shooting)
-			console.log('this.arrowLocation', this.arrowLocation)
-			this.arrowLocation.x -= 6;
-			const a = this.arrowLocation.x -= 6;
-			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
-
-
-		}
-	}
 	// this function will have the arrow follow the hero if he is not shooting
 	this.arrowFollow = function () {
-		if (!shooting) {
-			if (this.faceLeft) {
-				this.arrowLocation.x = this.x - 4;
-				this.arrowLocation.y = this.y + 18;
+		if (this.faceLeft) {
+			this.arrowLocation.x = this.x - 4;
+			this.arrowLocation.y = this.y + 18;
 
-			}
+		}
 
-			if (!this.faceLeft) {
-				this.arrowLocation.x = this.x + 22;
-				this.arrowLocation.y = this.y + 18;
+		if (!this.faceLeft) {
+			this.arrowLocation.x = this.x + 22;
+			this.arrowLocation.y = this.y + 18;
 
-			}
 		}
 	}
 
@@ -219,12 +212,10 @@ function Hero(name, image, speed) {
 		// don't let arrow go off map
 		if (this.arrowLocation.x > movementBounds.x2) {
 			console.log("ARROW OFF X MAP")
-			shooting = false;
 		}
 
 		if (this.arrowLocation.x < movementBounds.x1) {
 			console.log("ARROW OFF X2 MAP")
-			shooting = false;
 		}
 
 
@@ -240,10 +231,8 @@ function Hero(name, image, speed) {
 					this.arrowImage.src = "Images/arrow-left.png";
 				}
 
-				if (!shooting) {
-					this.arrowLocation.x = this.x - 4;
-					this.arrowLocation.y = this.y + 18;
-				}
+				this.arrowLocation.x = this.x - 4;
+				this.arrowLocation.y = this.y + 18;
 				this.faceLeft = true;
 
 			}
@@ -283,6 +272,7 @@ function Hero(name, image, speed) {
 		// 	this.stopShooting();
 		// }
 
+
 		if (keyQueue.length > 0) {
 
 			const dKey = 68
@@ -294,13 +284,19 @@ function Hero(name, image, speed) {
 			if (keyPressed == dKey) {
 				console.log('shooting function')
 				//shooting prevents arrow from moving with character
-				shooting = true;
 				// if the spacebar is hit, shoot the arrow 50 pixels right, user can hold it to make it go farther
 				let addDistanceCounter = 1;
 
-				this.arrowLocation.destinationX = this.arrowLocation.x + 450;
+				const arrowId = generateUniqueId();
+				const newArrowRight = new Arrow(arrowId, robinHood.x - 1, robinHood.y + 18, robinHood.x + 450, 'RIGHT')
 
-				console.log('this.arrowLocation', this.arrowLocation)
+				arrows[arrowId] = newArrowRight
+
+				console.log('arrows', arrows)
+
+				// this.arrowLocation.destinationX = this.arrowLocation.x + 450;
+
+				// console.log('this.arrowLocation', this.arrowLocation)
 
 
 				// change image source and make sure the character is facing right
@@ -315,8 +311,14 @@ function Hero(name, image, speed) {
 			}
 
 			if (keyPressed == aKey) {
-				shooting = true;
-				this.arrowLocation.destinationX = this.arrowLocation.x - 400;
+
+
+
+				const arrowId = generateUniqueId();
+				const newArrow = new Arrow(arrowId, robinHood.x - 4, robinHood.y + 18, robinHood.x - 450, 'LEFT')
+
+				arrows[arrowId] = newArrow
+
 
 
 				// change the image source and make sure the character is shooting left
@@ -334,7 +336,6 @@ function Hero(name, image, speed) {
 		}
 
 		if (keyQueue.indexOf(65) !== -1) {
-			shooting = true;
 			this.arrowLocation.destinationX = this.arrowLocation.x - 200;
 
 
@@ -349,29 +350,78 @@ function Hero(name, image, speed) {
 			}
 
 		}
-
-
-
-
-
-
-		// if the arrow is within 10 pixels of its destination stop it
-		if (Math.abs(this.arrowLocation.x - this.arrowLocation.destinationX) < 10) {
-			this.stopShooting();
-		}
-
-
-
 	}
-	//when this is called, stop shooting and return the arrow to robinhood
-	this.stopShooting = function () {
-		// stop robinhood from shooting and return the arrow to teh character
-		// shooting = false;
-		// this.arrowFollow();
-	}
+	// this.shoot = throttle(this._shoot.bind(this), 500);
+
 
 }
 
+const arrows = {
+
+};
+class Arrow {
+	constructor(id, x, y, destinationX, arrowDirection) {
+		this.id = id;
+		this.image = new Image();
+		this.image.src = "Images/arrow-right.png";
+		this.hitEnemy = false;
+		this.arrowDirection = arrowDirection;
+		if (arrowDirection === "LEFT") {
+			this.image.src = "Images/arrow-left.png"; // Image for left direction
+		}
+
+
+		this.arrowLocation = {
+			x,
+			y,
+			destinationX
+		}
+	}
+
+	arrowMove = function () {
+		if (this.hitEnemy) return;
+		//if the arrow is not within 10 pixels of its destination, keep it going
+		const movementBounds = {
+			x1: 70,
+			x2: 520,
+			y1: 30,
+			y2: 390
+		}
+
+		// don't let arrow go off map
+		console.log(this, 'arrows ******')
+		if (this.arrowLocation.x > movementBounds.x2 && this.arrowDirection === 'RIGHT') {
+			console.log("ARROW OFF X MAP")
+
+			deleteObjectByKey(arrows, this.id)
+		}
+
+		if (this.arrowLocation.x < movementBounds.x1) {
+			console.log("ARROW OFF X2 MAP")
+			deleteObjectByKey(arrows, this.id)
+		}
+
+		if (this.arrowLocation.x < this.arrowLocation.destinationX && this.arrowDirection === 'RIGHT') {
+
+			console.log('this.arrowLocation', this.arrowLocation)
+			this.arrowLocation.x += 6;
+			const a = this.arrowLocation.x += 6;
+			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
+
+
+		}
+
+		if (this.arrowLocation.x > this.arrowLocation.destinationX && this.arrowDirection === 'LEFT') {
+
+			console.log('this.arrowLocation', this.arrowLocation)
+			this.arrowLocation.x -= 6;
+			const a = this.arrowLocation.x -= 6;
+			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
+
+
+		}
+	}
+}
 // ----------------------------------------------------------
 // ------------MONSTER AND ALLY CONSTRUCTORS BELOW-----------
 // ----------------------------------------------------------
@@ -381,19 +431,19 @@ class Enemy {
 	constructor() {
 
 	}
-	showHeroHurtOverlay = function() {
+	showHeroHurtOverlay = function () {
 		document.getElementById("hurtByEnemy").style.opacity = .5;
-			setTimeout(() => {
-				document.getElementById("hurtByEnemy").style.opacity = 0;
-			}, 200)
-	}	
+		setTimeout(() => {
+			document.getElementById("hurtByEnemy").style.opacity = 0;
+		}, 200)
+	}
 }
 
 class Goblin extends Enemy {
 	constructor(name) {
 		super()
 		this.name = name;
-		this.health = 3;
+		this.health = 6;
 		this.image = new Image();
 		this.image.src = "possible-enemies-allies/royalty goblin.png"
 		this.speed = 1;
@@ -411,7 +461,7 @@ class Goblin extends Enemy {
 				this.x -= 2.94 * this.speed;
 				this.image.src = "possible-enemies-allies/royalty goblin-left.png";
 			}
-	
+
 			if (Math.abs(this.y - this.destinationY) < 32) {
 				this.destinationY = Math.random() * 400 + 20;
 			} else if (this.y > this.destinationY) {
@@ -423,7 +473,7 @@ class Goblin extends Enemy {
 	}
 
 	catchRobinHood = function () {
-		
+
 		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
 		if (
 			Math.abs((this.x - robinHood.x)) < 24
@@ -433,23 +483,31 @@ class Goblin extends Enemy {
 			//robin hoood got hit
 			this.x = Math.random() * 440 + 40;
 			this.y = Math.random() * 400 + 20;
-			robinHood.health--;						
-			
+			robinHood.health--;
+
 			document.getElementById("health").innerHTML = robinHood.health;
 		}
 	}
 	getHitByArrow = function () {
-		if (
-			Math.abs(robinHood.arrowLocation.x - this.x) < 15
-			&& Math.abs(robinHood.arrowLocation.y - this.y) < 28
-			&& shooting === true
-		) {
-			// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-			this.health -= arrowDamage;
-			shooting = false;
-			robinHood.stopShooting();
-			this.changeSpeed();
+		let currentArrow;
+		for (const key in arrows) {
+
+			currentArrow = arrows[key]
+
+			if (
+				Math.abs(currentArrow.arrowLocation.x - this.x) < 15
+				&& Math.abs(currentArrow.arrowLocation.y - this.y) < 28
+			) {
+				if (!currentArrow.hitEnemy) {
+					this.health -= arrowDamage;
+					currentArrow.hitEnemy = true;
+					deleteObjectByKey(arrows, this.id);
+					this.changeSpeed();
+				}
+				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
+			}
 		}
+
 	}
 
 	getHitByNinjaStar = function () {
@@ -501,7 +559,7 @@ class Thug extends Enemy {
 	constructor(name) {
 		super()
 		this.name = name;
-		this.health = 6;
+		this.health = 12;
 		this.image = new Image();
 		this.image.src = "possible-enemies-allies/thug.png";
 		this.speed = 1;
@@ -517,13 +575,13 @@ class Thug extends Enemy {
 				this.x -= 2 * this.speed;
 				this.image.src = "possible-enemies-allies/thug-left.png";
 			}
-	
+
 			if (Math.abs(this.y - robinHood.y) < 24) {
 				this.catchRobinHood();
 			} else if (this.y > robinHood.y) {
 				this.y -= 2 * this.speed;
-	
-	
+
+
 			} else {
 				this.y += 2 * this.speed;
 			}
@@ -547,18 +605,27 @@ class Thug extends Enemy {
 		}
 
 	}
+
 	getHitByArrow = function () {
-		if (
-			Math.abs(robinHood.arrowLocation.x - this.x) < 15
-			&& Math.abs(robinHood.arrowLocation.y - this.y) < 33
-			&& shooting === true
-		) {
-			// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-			this.health -= arrowDamage;
-			shooting = false;
-			robinHood.stopShooting();
-			this.changeSpeed();
+		let currentArrow;
+		for (const key in arrows) {
+
+			currentArrow = arrows[key]
+
+			if (
+				Math.abs(currentArrow.arrowLocation.x - this.x) < 15
+				&& Math.abs(currentArrow.arrowLocation.y - this.y) < 28
+			) {
+				if (!currentArrow.hitEnemy) {
+					this.health -= arrowDamage;
+					currentArrow.hitEnemy = true;
+					deleteObjectByKey(arrows, this.id);
+					this.changeSpeed();
+				}
+				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
+			}
 		}
+
 	}
 
 	getHitByNinjaStar = function () {
@@ -613,10 +680,10 @@ class Golem extends Enemy {
 	constructor(name) {
 		super()
 		this.name = name;
-		this.health = 80;
+		this.health = 120;
 		this.image = new Image();
 		this.image.src = "possible-enemies-allies/golem1.png";
-		this.speed = 1;
+		this.speed = 1.2;
 		this.x = 300;
 		this.y = 200;
 		this.move = function () {
@@ -629,7 +696,7 @@ class Golem extends Enemy {
 				this.x -= 1.3 * this.speed;
 				this.image.src = "possible-enemies-allies/golem-face-left.png";
 			}
-	
+
 			if (Math.abs(this.y - robinHood.y) < 32) {
 				this.catchRobinHood();
 			} else if (this.y > robinHood.y) {
@@ -652,23 +719,32 @@ class Golem extends Enemy {
 			this.x = Math.random() * 440 + 40;
 			this.y = Math.random() * 400 + 20;
 			robinHood.health--;
-			
+
 			document.getElementById("health").innerHTML = robinHood.health;
 		}
 
 	}
+
 	getHitByArrow = function () {
-		if (
-			Math.abs(robinHood.arrowLocation.x - this.x) < 30
-			&& Math.abs(robinHood.arrowLocation.y - this.y) < 70
-			&& shooting === true
-		) {
-			// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-			this.health -= arrowDamage;
-			shooting = false;
-			robinHood.stopShooting();
-			this.changeSpeed();
+		let currentArrow;
+		for (const key in arrows) {
+
+			currentArrow = arrows[key]
+
+			if (
+				Math.abs(currentArrow.arrowLocation.x - this.x) < 30
+				&& Math.abs(currentArrow.arrowLocation.y - this.y) < 70
+			) {
+				if (!currentArrow.hitEnemy) {
+					this.health -= arrowDamage;
+					currentArrow.hitEnemy = true;
+					deleteObjectByKey(arrows, this.id);
+					this.changeSpeed();
+				}
+				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
+			}
 		}
+
 	}
 
 	getHitByNinjaStar = function () {
@@ -1121,8 +1197,7 @@ robinHood.gold += 100;
 function update() {
 	userPause(keysPressed);
 	robinHood.move(keysPressed);
-	robinHood.arrowMove()
-	console.log("UPDATE SHOOTING", shooting)
+	// robinHood.arrowMove()
 	// robinHood.shoot(keysPressed);
 	robinHood.shoot(keyQueue);
 	robinHood.arrowFollow();
@@ -1131,6 +1206,12 @@ function update() {
 
 
 	console.log('ninja', ninjaArray)
+
+	for (const key in arrows) {
+
+		arrows[key].arrowMove()
+	}
+
 	for (var i = 0; i < ninjaArray.length; i++) {
 		ninjaArray[i].move();
 		ninjaArray[i].moveNinjaStar();
@@ -1209,42 +1290,49 @@ function draw() {
 	context.drawImage(robinHood.image, robinHood.x, robinHood.y);
 
 	console.log('robinhood.arrowlocation', robinHood.arrowLocation)
-	context.drawImage(robinHood.arrowImage, robinHood.arrowLocation.x, robinHood.arrowLocation.y);
-	// context.drawImage(ninja0.image, ninja0.x, ninja0.y);
-	// context.drawImage(ninja0.ninjaStarImage, ninja0.ninjaStarLocation.x, ninja0.ninjaStarLocation.y);
+	// context.drawImage(robinHood.arrowImage, robinHood.arrowLocation.x, robinHood.arrowLocation.y);
+
+
+	// draw arrows on the screen
+	// let logCount = 0
+	// arrows.forEach(arrow => {
+	// 	if (logCount > 50) {
+	// 		console.log(arrow, 'arrow'); // Log each individual arrow object
+	// 	}
+	// 	context.drawImage(arrow.image, arrow.arrowLocation.x, arrow.arrowLocation.y);
+	// });
+
+	let currentArrow;
+
+	for (const arrowKey in arrows) {
+		currentArrow = arrows[arrowKey]
+
+		// console.log(currentArrow, 'current Arrow image')
+		if (!currentArrow.hitEnemy) {
+			context.drawImage(currentArrow.image, currentArrow.arrowLocation.x, currentArrow.arrowLocation.y);
+		}
+	}
+
 	//a for loop that draws and moves all the goblins in the arrray
 	for (var i = 0; i < goblinArray.length; i++) {
 
-		if (goblinArray[i].health <= 0) {
-			// don't draw the goblin if his health is less than 0 
-		} else {
+		if (goblinArray[i].health > 0) {
 			context.drawImage(goblinArray[i].image, goblinArray[i].x, goblinArray[i].y);
 		}
 	}
 	// Draw the thug on the page
-	// context.drawImage(thug0.image, thug0.x, thug0.y);
-
-
-
-
 
 	for (var i = 0; i < thugArray.length; i++) {
-
-		if (thugArray[i].health <= 0) {
-			// do not drwa this thug if his health is lower than 0
-
-		} else {
+		if (thugArray[i].health > 0) {
 			context.drawImage(thugArray[i].image, thugArray[i].x, thugArray[i].y);
 		}
 	}
 
 	for (var i = 0; i < golemArray.length; i++) {
 
-		if (golemArray[i].health <= 0) {
-			//do nothing
-
-		} else {
+		if (golemArray[i].health > 0) {
 			context.drawImage(golemArray[i].image, golemArray[i].x, golemArray[i].y);
+
 		}
 	}
 
