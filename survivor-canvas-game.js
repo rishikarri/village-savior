@@ -292,9 +292,9 @@ function Hero(name, image, speed) {
 				let addDistanceCounter = 1;
 
 				const arrowId = generateUniqueId();
-				const newArrow = new Arrow(arrowId, robinHood.x, robinHood.y, robinHood.x + 450, 'RIGHT')
+				const newArrowRight = new Arrow(arrowId, robinHood.x, robinHood.y, robinHood.x + 450, 'RIGHT')
 
-				arrows[arrowId] = newArrow
+				arrows[arrowId] = newArrowRight
 
 				console.log('arrows', arrows)
 
@@ -318,7 +318,12 @@ function Hero(name, image, speed) {
 
 
 				shooting = true;
-				this.arrowLocation.destinationX = this.arrowLocation.x - 400;
+
+				const arrowId = generateUniqueId();
+				const newArrow = new Arrow(arrowId, robinHood.x, robinHood.y, robinHood.x - 450, 'LEFT')
+
+				arrows[arrowId] = newArrow
+
 
 
 				// change the image source and make sure the character is shooting left
@@ -405,11 +410,11 @@ class Arrow {
 		}
 
 		// don't let arrow go off map
-		if (this.arrowLocation.x > movementBounds.x2) {
+		console.log(this, 'arrows ******')
+		if (this.arrowLocation.x > movementBounds.x2 && this.arrowDirection === 'RIGHT') {
 			console.log("ARROW OFF X MAP")
 
 			deleteObjectByKey(arrows, this.id)
-			console.log('arrows delete', arrows)
 		}
 
 		if (this.arrowLocation.x < movementBounds.x1) {
@@ -417,7 +422,7 @@ class Arrow {
 			deleteObjectByKey(arrows, this.id)
 		}
 
-		if (this.arrowLocation.x < this.arrowLocation.destinationX) {
+		if (this.arrowLocation.x < this.arrowLocation.destinationX && this.arrowDirection === 'RIGHT') {
 
 			console.log('shooting new arrow function', shooting)
 			console.log('this.arrowLocation', this.arrowLocation)
@@ -428,7 +433,7 @@ class Arrow {
 
 		}
 
-		if (this.arrowLocation.x > this.arrowLocation.destinationX) {
+		if (this.arrowLocation.x > this.arrowLocation.destinationX && this.arrowDirection === 'LEFT') {
 
 			console.log('shooting', shooting)
 			console.log('this.arrowLocation', this.arrowLocation)
