@@ -1278,7 +1278,7 @@ function draw() {
 	for (const arrowKey in arrows) {
 		currentArrow = arrows[arrowKey]
 		
-		console.log(currentArrow, 'current Arrow image')
+		// console.log(currentArrow, 'current Arrow image')
 		context.drawImage(currentArrow.image, currentArrow.arrowLocation.x, currentArrow.arrowLocation.y);
 	  }
 	
