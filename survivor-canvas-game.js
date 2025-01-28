@@ -366,6 +366,8 @@ const arrows = {
 };
 class Arrow {
 	constructor(id, x, y, destinationX) {
+		this.arrowImage = new Image();
+		this.arrowImage.src = "Images/arrow-right.png";
 		this.id = id;
 		this.arrowLocation = {
 			x,
@@ -1260,39 +1262,38 @@ function draw() {
 
 	console.log('robinhood.arrowlocation', robinHood.arrowLocation)
 	context.drawImage(robinHood.arrowImage, robinHood.arrowLocation.x, robinHood.arrowLocation.y);
-	// context.drawImage(ninja0.image, ninja0.x, ninja0.y);
-	// context.drawImage(ninja0.ninjaStarImage, ninja0.ninjaStarLocation.x, ninja0.ninjaStarLocation.y);
+	
+
+	// draw arrows on the screen
+	// let logCount = 0
+	// arrows.forEach(arrow => {
+	// 	if (logCount > 50) {
+	// 		console.log(arrow, 'arrow'); // Log each individual arrow object
+	// 	}
+	// 	context.drawImage(arrow.image, arrow.arrowLocation.x, arrow.arrowLocation.y);
+	// });
+	
 	//a for loop that draws and moves all the goblins in the arrray
 	for (var i = 0; i < goblinArray.length; i++) {
 
-		if (goblinArray[i].health <= 0) {
-			// don't draw the goblin if his health is less than 0 
-		} else {
+		if (goblinArray[i].health > 0) {
 			context.drawImage(goblinArray[i].image, goblinArray[i].x, goblinArray[i].y);
-		}
+		} 
 	}
 	// Draw the thug on the page
-	// context.drawImage(thug0.image, thug0.x, thug0.y);
-
-
-
-
 
 	for (var i = 0; i < thugArray.length; i++) {
-		if (thugArray[i].health >= 0) {
+		if (thugArray[i].health > 0) {
 			context.drawImage(thugArray[i].image, thugArray[i].x, thugArray[i].y);
-
 		} 
 	}
 
 	for (var i = 0; i < golemArray.length; i++) {
 
-		if (golemArray[i].health <= 0) {
-			//do nothing
-
-		} else {
+		if (golemArray[i].health > 0) {
 			context.drawImage(golemArray[i].image, golemArray[i].x, golemArray[i].y);
-		}
+
+		} 
 	}
 
 	// drawing ninjas on the screen in addition to each one of their ninja star locations
