@@ -292,7 +292,7 @@ function Hero(name, image, speed) {
 				let addDistanceCounter = 1;
 
 				const arrowId = generateUniqueId();
-				const newArrowRight = new Arrow(arrowId, robinHood.x, robinHood.y, robinHood.x + 450, 'RIGHT')
+				const newArrowRight = new Arrow(arrowId, robinHood.x - 1, robinHood.y + 18, robinHood.x + 450, 'RIGHT')
 
 				arrows[arrowId] = newArrowRight
 
@@ -320,7 +320,7 @@ function Hero(name, image, speed) {
 				shooting = true;
 
 				const arrowId = generateUniqueId();
-				const newArrow = new Arrow(arrowId, robinHood.x, robinHood.y, robinHood.x - 450, 'LEFT')
+				const newArrow = new Arrow(arrowId, robinHood.x - 4, robinHood.y + 18, robinHood.x - 450, 'LEFT')
 
 				arrows[arrowId] = newArrow
 
