@@ -19,7 +19,16 @@ backgroundImage.src = "Images/background2.jpeg";
 // ----------------Administrative Section, Instructions------
 // ----------------------------------------------------------
 
-
+function generateUniqueId() {
+	// Generate a random string using a combination of characters
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	for (let i = 0; i < 16; i++) { 
+	  result += chars.charAt(Math.floor(Math.random() * chars.length));
+	}
+	return result;
+  }
+  
 
 
 
@@ -156,33 +165,6 @@ function Hero(name, image, speed) {
 	this.faceLeft = false;
 	this.arrowImage = new Image();
 	this.arrowImage.src = "Images/arrow-right.png";
-	this.arrowMove = function () {
-		//if the arrow is not within 10 pixels of its destination, keep it going
-		let counter = 0;
-
-
-		if (this.arrowLocation.x < this.arrowLocation.destinationX && shooting) {
-
-			console.log('shooting', shooting)
-			console.log('this.arrowLocation', this.arrowLocation)
-			this.arrowLocation.x += 6;
-			const a = this.arrowLocation.x += 6;
-			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
-
-
-		}
-
-		if (this.arrowLocation.x > this.arrowLocation.destinationX && shooting) {
-
-			console.log('shooting', shooting)
-			console.log('this.arrowLocation', this.arrowLocation)
-			this.arrowLocation.x -= 6;
-			const a = this.arrowLocation.x -= 6;
-			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
-
-
-		}
-	}
 	// this function will have the arrow follow the hero if he is not shooting
 	this.arrowFollow = function () {
 		if (!shooting) {
@@ -298,6 +280,13 @@ function Hero(name, image, speed) {
 				// if the spacebar is hit, shoot the arrow 50 pixels right, user can hold it to make it go farther
 				let addDistanceCounter = 1;
 
+				const arrowId = generateUniqueId();
+				const newArrow = new Arrow(arrowId, robinHood.x, robinHood.y, robinHood.x + 450)
+
+				arrows[arrowId] = newArrow
+
+				console.log('arrows', arrows)
+
 				this.arrowLocation.destinationX = this.arrowLocation.x + 450;
 
 				console.log('this.arrowLocation', this.arrowLocation)
@@ -372,6 +361,61 @@ function Hero(name, image, speed) {
 
 }
 
+const arrows = {
+
+};
+class Arrow {
+	constructor(id, x, y, destinationX) {
+		this.id = id;
+		this.arrowLocation = {
+			x,
+			y,
+			destinationX
+		}
+	}
+
+	arrowMove = function () {
+		//if the arrow is not within 10 pixels of its destination, keep it going
+		const movementBounds = {
+			x1: 80,
+			x2: 520,
+			y1: 30,
+			y2: 390
+		}
+
+		// don't let arrow go off map
+		if (this.arrowLocation.x > movementBounds.x2) {
+			console.log("ARROW OFF X MAP")
+			// TODO: add logic to remove arrow from lookup
+		}
+
+		if (this.arrowLocation.x < movementBounds.x1) {
+			console.log("ARROW OFF X2 MAP")
+		}
+
+		if (this.arrowLocation.x < this.arrowLocation.destinationX) {
+
+			console.log('shooting new arrow function', shooting)
+			console.log('this.arrowLocation', this.arrowLocation)
+			this.arrowLocation.x += 6;
+			const a = this.arrowLocation.x += 6;
+			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
+
+
+		}
+
+		if (this.arrowLocation.x > this.arrowLocation.destinationX) {
+
+			console.log('shooting', shooting)
+			console.log('this.arrowLocation', this.arrowLocation)
+			this.arrowLocation.x -= 6;
+			const a = this.arrowLocation.x -= 6;
+			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
+
+
+		}
+	}
+}
 // ----------------------------------------------------------
 // ------------MONSTER AND ALLY CONSTRUCTORS BELOW-----------
 // ----------------------------------------------------------
@@ -1121,7 +1165,7 @@ robinHood.gold += 100;
 function update() {
 	userPause(keysPressed);
 	robinHood.move(keysPressed);
-	robinHood.arrowMove()
+	// robinHood.arrowMove()
 	console.log("UPDATE SHOOTING", shooting)
 	// robinHood.shoot(keysPressed);
 	robinHood.shoot(keyQueue);
@@ -1131,6 +1175,12 @@ function update() {
 
 
 	console.log('ninja', ninjaArray)
+
+	for (const key in arrows) {
+
+		arrows[key].arrowMove()
+	  }
+
 	for (var i = 0; i < ninjaArray.length; i++) {
 		ninjaArray[i].move();
 		ninjaArray[i].moveNinjaStar();
@@ -1229,13 +1279,10 @@ function draw() {
 
 
 	for (var i = 0; i < thugArray.length; i++) {
-
-		if (thugArray[i].health <= 0) {
-			// do not drwa this thug if his health is lower than 0
-
-		} else {
+		if (thugArray[i].health >= 0) {
 			context.drawImage(thugArray[i].image, thugArray[i].x, thugArray[i].y);
-		}
+
+		} 
 	}
 
 	for (var i = 0; i < golemArray.length; i++) {
