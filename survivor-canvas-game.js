@@ -175,7 +175,7 @@ addEventListener("keydown", function (event) {
 var arrowDamage = 1;
 function Hero(name, image, speed) {
 	this.name = name;
-	this.health = 8;
+	this.health = 6;
 	this.gold = 0;
 	this.image = new Image();
 	this.image.src = image;

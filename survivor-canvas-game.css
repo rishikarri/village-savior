@@ -8,6 +8,52 @@ html{
 	
 }
 
+/* Basic modal styles (you'll likely have more) */
+.modal-instructions-content {
+  /* ... existing styles ... */
+}
+
+.instruction-block {
+  margin-bottom: 20px; /* Space between instruction blocks */
+}
+
+.instruction-block h2 {
+  margin-bottom: 10px;
+}
+
+.visual-instruction {
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Vertically center content */
+  margin-bottom: 10px;
+}
+
+.instructions-movement-text {
+  margin-left: 20px;
+}
+
+#arrow-keys-image {
+  height: 80px;
+}
+
+.key-visual {
+  width: 40px;
+  height: 40px;
+  background-color: #eee; /* Light gray background for keys */
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center; /* Center text horizontally */
+  align-items: center; /* Center text vertically */
+  margin-right: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.arrow-keys {
+  /* Style for arrow key image if needed */
+  width: 100px; /* Adjust as needed */
+}
+
+
 /* Basic styling for the instructions modal */
 .modal-instructions {    
     max-height: 90vh;
@@ -99,6 +145,10 @@ button {
     position: absolute;
     text-align: center;
     
+}
+
+.arrow-launching-instructions {
+  font-weight: bold;
 }
 
 #top-section{

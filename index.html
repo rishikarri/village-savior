@@ -26,7 +26,7 @@
 				
 				
 				
-				<p id="health">8</p>
+				<p id="health">6</p>
 			</div>
 
 			<div id="game-play-buttons">
@@ -128,31 +128,48 @@
 		<div id="modal-instructions">
 
 			<div class="modal-instructions-content">
-					<span class="close-instructions">&times;</span>
-					<p>Hello there noble archer</p>
-					<p>Our land is being attacked by bandits and monsters</p>
-					<p>Please help hold them off</p>					
+				<span class="close-instructions">&times;</span>
 			  
-					<h2>Movement</h2>
-					<p>Use the <strong>arrow keys</strong> to move your archer:</p>
-					<ul>
-					  <li><strong>Up Arrow:</strong> Move Up</li>
-					  <li><strong>Down Arrow:</strong> Move Down</li>
-					  <li><strong>Left Arrow:</strong> Move Left</li>
-					  <li><strong>Right Arrow:</strong> Move Right</li>
-					</ul>
+				<section class="instruction-block">
+				  <p>Monsters and thieves are closing in.</p>
+				  <p>Buy the villagers time.</p>
+				  <p>Fight until you can't.</p>
+				  <p>Then, and only then, retreat.</p>
+				</section>
 			  
-					<h2>Shooting</h2>
-					<p>Use the following keys to shoot arrows:</p>
-					<ul>
-					  <li><strong>A Key:</strong> Shoot an arrow to the left.</li>
-					  <li><strong>D Key:</strong> Shoot an arrow to the right.</li>
-					</ul>
-
-					<p>When your health hits 0, you must retreat</p>
-					<p>Good luck</p>
-					<button id="start-game-button">Start Game</button> </div>
-	    	</div>	
+				<section class="instruction-block">
+				  <h2>Movement</h2>
+				  <div class="visual-instruction">
+					<img id="arrow-keys-image" src="Images/arrow-keys2.jpg" alt="Arrow Keys" usemap="#arrowkeysmap">
+					<map name="arrowkeysmap">
+					  <area shape="rect" coords="0,0,50,50" href="#" alt="Up Arrow">
+					  <area shape="rect" coords="50,0,100,50" href="#" alt="Down Arrow">
+					  <area shape="rect" coords="0,50,50,100" href="#" alt="Left Arrow">
+					  <area shape="rect" coords="50,50,100,100" href="#" alt="Right Arrow">
+					</map>
+					<p class="instructions-movement-text">Use the arrow keys to move.</p>
+				  </div>
+				</section>
+			  
+				<section class="instruction-block">
+				  <h2>How to Fight</h2>
+				  <div class="visual-instruction">
+					<div class="key-visual">A</div>
+					<p>Launch arrow left.</p>
+				  </div>
+				  <div class="visual-instruction">
+					<div class="key-visual">D</div>
+					<p>Launch arrow right.</p>
+				  </div>
+				</section>
+			  
+				<p>Good luck</p>
+				<button id="start-game-button">Start Game</button>
+			  </div>
+			  
+			  <script>
+				// ... (your existing JavaScript code) ...
+			  </script>
 		</div>
 		
 
