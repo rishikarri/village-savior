@@ -1137,15 +1137,18 @@ function checkPurchasingAbility() {
 		disableButton("health-potion-button");
 		disableButton("speed-potion-button");
 		disableButton("fire-arrows-button");
-		// disableButton("ninja-button");
-	} else if (robinHood.gold < 300) {
+	} 
+	
+	if (robinHood.gold < 300) {
 		disableButton("speed-potion-button");
 		disableButton("fire-arrows-button");
 		// disableButton("ninja-button");
-	} else if (robinHood.gold < 500) {
+	} 
+	if (robinHood.gold < 500) {
 		disableButton("speed-potion-button");
 		// disableButton("ninja-button");
-	} else if (robinHood.gold < 80) {
+	} 
+	if (robinHood.gold < 80) {
 		disableButton("ninja-button");
 	}
 }
@@ -1319,6 +1322,7 @@ function draw() {
 	context.drawImage(backgroundImage, 0, 0);
 	// context.drawImage(golem0.image, golem0.x, golem0.y);
 
+	// make hero translucent for first 3 seconds 
 	if (score < 3) {
 		context.globalAlpha = 0.5; // Set opacity (0.0 - 1.0)
 	
