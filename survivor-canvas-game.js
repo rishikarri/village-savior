@@ -492,19 +492,22 @@ class Goblin extends Enemy {
 
 	catchRobinHood = function () {
 
-		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
-		if (
-			Math.abs((this.x - robinHood.x)) < 24
-			&& Math.abs(this.y - robinHood.y) < 24
-		) {
-			this.showHeroHurtOverlay()
-			//robin hoood got hit
-			this.x = Math.random() * 440 + 40;
-			this.y = Math.random() * 400 + 20;
-			robinHood.health--;
-
-			document.getElementById("health").innerHTML = robinHood.health;
+		if (score > 3) {
+			// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
+			if (
+				Math.abs((this.x - robinHood.x)) < 24
+				&& Math.abs(this.y - robinHood.y) < 24
+			) {
+				this.showHeroHurtOverlay()
+				//robin hoood got hit
+				this.x = Math.random() * 440 + 40;
+				this.y = Math.random() * 400 + 20;
+				robinHood.health--;
+	
+				document.getElementById("health").innerHTML = robinHood.health;
+			}
 		}
+
 	}
 	getHitByArrow = function () {
 		let currentArrow;
@@ -608,18 +611,20 @@ class Thug extends Enemy {
 
 
 	catchRobinHood = function () {
-		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
-		if (
-			Math.abs((this.x - robinHood.x)) < 18
-			&& Math.abs(this.y - robinHood.y) < 24
-		) {
-			this.showHeroHurtOverlay();
-			//generate new location if you hit him
-			//robin hoood got hit
-			this.x = Math.random() * 440 + 40;
-			this.y = Math.random() * 400 + 20;
-			robinHood.health--;
-			document.getElementById("health").innerHTML = robinHood.health;
+		if (score > 3) {
+			// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
+			if (
+				Math.abs((this.x - robinHood.x)) < 18
+				&& Math.abs(this.y - robinHood.y) < 24
+			) {
+				this.showHeroHurtOverlay();
+				//generate new location if you hit him
+				//robin hoood got hit
+				this.x = Math.random() * 440 + 40;
+				this.y = Math.random() * 400 + 20;
+				robinHood.health--;
+				document.getElementById("health").innerHTML = robinHood.health;
+			}
 		}
 
 	}
@@ -1313,7 +1318,16 @@ function draw() {
 
 	context.drawImage(backgroundImage, 0, 0);
 	// context.drawImage(golem0.image, golem0.x, golem0.y);
-	context.drawImage(robinHood.image, robinHood.x, robinHood.y);
+
+	if (score < 3) {
+		context.globalAlpha = 0.5; // Set opacity (0.0 - 1.0)
+	
+		context.drawImage(robinHood.image, robinHood.x, robinHood.y);
+	
+		context.globalAlpha = 1.0;
+	} else {
+		context.drawImage(robinHood.image, robinHood.x, robinHood.y);
+	}
 
 	console.log('robinhood.arrowlocation', robinHood.arrowLocation)
 	// context.drawImage(robinHood.arrowImage, robinHood.arrowLocation.x, robinHood.arrowLocation.y);
