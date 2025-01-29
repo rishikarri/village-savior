@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 	<html>
 	<head>
-		<title>Village Savior!</title>
+		<title>Village Savior</title>
 
 		<link rel="stylesheet" type="text/css" href="survivor-canvas-game.css">
 	</head>
@@ -26,16 +26,15 @@
 				
 				
 				
-				<p id="health">20</p>
+				<p id="health">6</p>
 			</div>
 
 			<div id="game-play-buttons">
-				<button id="start-button"onclick="startGame()">Start a New Game</button>
-				<button id="pause-button" onclick="pauseGame()">Pause Game</button>
-				<button id="resume-button" onclick="resumeGame()">Resume Game</button>
-				<button id="open-shop-button"onclick="openShop(); checkPurchasingAbility();">Enter Shop</button>
+				<button id="start-button"onclick="startGame()">New Game</button>
+				<button id="pause-resume-button" onclick="togglePause()">Pause</button>
+				<button id="open-shop-button"onclick="openShop(); checkPurchasingAbility();"> Shop</button>
 
-				<button id="view-instructions-button"onclick="viewInstructions();">View Instructions</button>
+				<button id="view-instructions-button"onclick="viewInstructions();">Instructions</button>
 				<!-- Make a form here -->
 				<!-- <form id="enter-name-form" onsubmit="recordName();">
 
@@ -129,12 +128,48 @@
 		<div id="modal-instructions">
 
 			<div class="modal-instructions-content">
-	    		<span class="close-instructions">&times;</span>
-	    		<p>Hello there noble archer! Our land has been overrun by bandits and monsters! Please destroy as many of them as you can before your health falls to the point where you must retreat. Instructions on how to fight are below!</p>
-
-	    		<p> Use the arrows to move! </p>
-
-	    	</div>	
+				<span class="close-instructions">&times;</span>
+			  
+				<section class="instruction-block">
+				  <p>Monsters and thieves are closing in.</p>
+				  <p>Buy the villagers time.</p>
+				  <p>Fight until you can't.</p>
+				  <p>Then, and only then, retreat.</p>
+				</section>
+			  
+				<section class="instruction-block">
+				  <h2>Movement</h2>
+				  <div class="visual-instruction">
+					<img id="arrow-keys-image" src="Images/arrow-keys2.jpg" alt="Arrow Keys" usemap="#arrowkeysmap">
+					<map name="arrowkeysmap">
+					  <area shape="rect" coords="0,0,50,50" href="#" alt="Up Arrow">
+					  <area shape="rect" coords="50,0,100,50" href="#" alt="Down Arrow">
+					  <area shape="rect" coords="0,50,50,100" href="#" alt="Left Arrow">
+					  <area shape="rect" coords="50,50,100,100" href="#" alt="Right Arrow">
+					</map>
+					<p class="instructions-movement-text">Use the arrow keys to move.</p>
+				  </div>
+				</section>
+			  
+				<section class="instruction-block">
+				  <h2>How to Fight</h2>
+				  <div class="visual-instruction">
+					<div class="key-visual">A</div>
+					<p>Launch arrow left.</p>
+				  </div>
+				  <div class="visual-instruction">
+					<div class="key-visual">D</div>
+					<p>Launch arrow right.</p>
+				  </div>
+				</section>
+			  
+				<p>Good luck</p>
+				<button id="start-game-button">Start Game</button>
+			  </div>
+			  
+			  <script>
+				// ... (your existing JavaScript code) ...
+			  </script>
 		</div>
 		
 

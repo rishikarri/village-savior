@@ -45,8 +45,7 @@ function deleteObjectByKey(obj, keyToDelete) {
   
 
 
-
-
+let useFireArrows = false; 
 var score = 0;
 
 counterInterval = setInterval(updateCounter, 1000);
@@ -104,29 +103,38 @@ function startGame() {
 	//set hero's health to 20  when the game starts
 	// refresh teh page to start a new game
 	location.reload();
+	viewInstructions()
 }
 
 
 function userPause() {
-	if (32 in keysPressed) {
-		pauseGame();
-	}
+	// if (32 in keysPressed) {
+	// 	togglePause();
+	// }
 }
 
+let gamePaused = false; // Flag to track pause state
+const pauseResumeButton = document.getElementById('pause-resume-button');
+function togglePause() {
+    gamePaused = !gamePaused; // Toggle the pause state
 
+    if (gamePaused) {
+      pauseResumeButton.textContent = "Resume";
+      pauseGame(); // Call your pause game function
+    } else {
+      pauseResumeButton.textContent = "Pause";
+      resumeGame(); // Call your resume game function
+    }
+  }
 function pauseGame() {
 	gameOn = false;
 	monsterIntervalManager(true);
-	enableButton("resume-button");
 }
 
-// disable resume button from teh start
-disableButton("resume-button");
 function resumeGame() {
 	gameOn = true;
 	counterInterval = setInterval(updateCounter, 1000); //update the counter every second
 	monsterIntervalManager(false);
-	disableButton("resume-button");
 	// var goblinInterval = setInterval(generateGoblinNumber, 5000);
 	// var golemInterval = setInterval(generateGolemNumber, 35000);
 	// var thugInterval = setInterval(generateThugNumber, 7000);
@@ -136,7 +144,6 @@ function openShop() {
 	// pause ggame so it's not running in the background
 	gameOn = false;
 	monsterIntervalManager(false);
-	enableButton("resume-button");
 
 }
 
@@ -168,7 +175,7 @@ addEventListener("keydown", function (event) {
 var arrowDamage = 1;
 function Hero(name, image, speed) {
 	this.name = name;
-	this.health = 20;
+	this.health = 6;
 	this.gold = 0;
 	this.image = new Image();
 	this.image.src = image;
@@ -366,8 +373,19 @@ class Arrow {
 		this.image.src = "Images/arrow-right.png";
 		this.hitEnemy = false;
 		this.arrowDirection = arrowDirection;
-		if (arrowDirection === "LEFT") {
-			this.image.src = "Images/arrow-left.png"; // Image for left direction
+		if (useFireArrows) {
+			console.log("FIRE ARROW")
+			if (arrowDirection === "LEFT") {
+				this.image.src = "Images/flaming-arrow2 left.png"
+			} 
+			if (arrowDirection === 'RIGHT') {
+				this.image.src = "Images/flaming-arrow2.png"
+			}
+
+		} else {
+			if (arrowDirection === "LEFT") {
+				this.image.src = "Images/arrow-left.png"; // Image for left direction
+			}
 		}
 
 
@@ -474,19 +492,22 @@ class Goblin extends Enemy {
 
 	catchRobinHood = function () {
 
-		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
-		if (
-			Math.abs((this.x - robinHood.x)) < 24
-			&& Math.abs(this.y - robinHood.y) < 24
-		) {
-			this.showHeroHurtOverlay()
-			//robin hoood got hit
-			this.x = Math.random() * 440 + 40;
-			this.y = Math.random() * 400 + 20;
-			robinHood.health--;
-
-			document.getElementById("health").innerHTML = robinHood.health;
+		if (score > 3) {
+			// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
+			if (
+				Math.abs((this.x - robinHood.x)) < 24
+				&& Math.abs(this.y - robinHood.y) < 24
+			) {
+				this.showHeroHurtOverlay()
+				//robin hoood got hit
+				this.x = Math.random() * 440 + 40;
+				this.y = Math.random() * 400 + 20;
+				robinHood.health--;
+	
+				document.getElementById("health").innerHTML = robinHood.health;
+			}
 		}
+
 	}
 	getHitByArrow = function () {
 		let currentArrow;
@@ -590,18 +611,20 @@ class Thug extends Enemy {
 
 
 	catchRobinHood = function () {
-		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
-		if (
-			Math.abs((this.x - robinHood.x)) < 18
-			&& Math.abs(this.y - robinHood.y) < 24
-		) {
-			this.showHeroHurtOverlay();
-			//generate new location if you hit him
-			//robin hoood got hit
-			this.x = Math.random() * 440 + 40;
-			this.y = Math.random() * 400 + 20;
-			robinHood.health--;
-			document.getElementById("health").innerHTML = robinHood.health;
+		if (score > 3) {
+			// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
+			if (
+				Math.abs((this.x - robinHood.x)) < 18
+				&& Math.abs(this.y - robinHood.y) < 24
+			) {
+				this.showHeroHurtOverlay();
+				//generate new location if you hit him
+				//robin hoood got hit
+				this.x = Math.random() * 440 + 40;
+				this.y = Math.random() * 400 + 20;
+				robinHood.health--;
+				document.getElementById("health").innerHTML = robinHood.health;
+			}
 		}
 
 	}
@@ -785,7 +808,7 @@ class Golem extends Enemy {
 
 			// change image source to nothing and increase gold
 			this.image.src = "";
-			robinHood.gold += 40;
+			robinHood.gold += 200;
 			document.getElementById("gold-collected").innerHTML = robinHood.gold;
 
 			//display the amount of gold Collected for 2 seconds
@@ -1045,10 +1068,17 @@ function viewInstructions() {
 }
 
 closeInstructions.onclick = function () {
+	resumeGame()
 	modalInstructions.style.display = "none";
 }
 
-//ask rob
+const startGameButton = document.getElementById('start-game-button');
+
+  startGameButton.addEventListener('click', function() {
+    resumeGame()
+	modalInstructions.style.display = "none";
+  });
+
 window.onclick = function (event) {
 	if (event.target == modalInstructions) {
 		modalInstructions.style.display = "none";
@@ -1076,6 +1106,7 @@ function openShop() {
 // When the user clicks on <span> (x), close the modal
 leaveShop.onclick = function () {
 	modalShop.style.display = "none";
+	resumeGame()
 }
 
 // When the user clicks anywhere outside of the modal, close it
@@ -1161,6 +1192,7 @@ function drinkSpeedPotion() {
 function giveHeroFireArrows() {
 	// increase arrow damage to 2
 	arrowDamage = 2;
+	useFireArrows = true;
 	//change arrow image source to fire arrows - logic above is already chagned
 	if (robinHood.faceLeft === true) {
 		robinHood.arrowImage.src = "Images/flaming-arrow2 left.png"
@@ -1266,8 +1298,7 @@ function checkGameStatus(health) {
 		gameOn = false;
 		document.getElementById("textDisplay").innerHTML = "GAME OVER";
 		monsterIntervalManager(true);
-		disableButton("pause-button");
-		disableButton("resume-button");
+		disableButton("pause-resume-button");
 		disableButton("open-shop-button");
 	}
 }
@@ -1287,7 +1318,16 @@ function draw() {
 
 	context.drawImage(backgroundImage, 0, 0);
 	// context.drawImage(golem0.image, golem0.x, golem0.y);
-	context.drawImage(robinHood.image, robinHood.x, robinHood.y);
+
+	if (score < 3) {
+		context.globalAlpha = 0.5; // Set opacity (0.0 - 1.0)
+	
+		context.drawImage(robinHood.image, robinHood.x, robinHood.y);
+	
+		context.globalAlpha = 1.0;
+	} else {
+		context.drawImage(robinHood.image, robinHood.x, robinHood.y);
+	}
 
 	console.log('robinhood.arrowlocation', robinHood.arrowLocation)
 	// context.drawImage(robinHood.arrowImage, robinHood.arrowLocation.x, robinHood.arrowLocation.y);
@@ -1345,6 +1385,7 @@ function draw() {
 
 }
 //
+viewInstructions()
 draw();
 
 
