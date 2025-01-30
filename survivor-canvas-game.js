@@ -60,7 +60,7 @@ function updateCounter() {
 
 
 var highScore = localStorage.getItem("highScore");
-document.getElementById("highScoreKeeper").innerHTML = "High Score: " + highScore;
+document.getElementById("highScoreKeeper").innerHTML = "High Score: " + (highScore || 0);
 //get the highsore
 function checkIfHighScore() {
 	// convert highScore into a number because it is currently a string
