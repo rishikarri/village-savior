@@ -10,22 +10,15 @@ Village Savior - Rishi Karri
     8. Code Examples
 
 ## Overview
-    Monsters and thieves are about to attack your village. 
-    Stave them off as long as you can in order to give the villagers time to escape! 
-    Be very careful! If your health falls to 0, you must retreat!
-
-    This game is a basic survivor game where the character has access to a shop. 
-    The goal of the game is to stay alive as long as possible with score equated to time playing the game. 
-
-    I built this game without using any frameworks.
-    This was one of my first major projects.
-    My goal was to learn as much vanilla JavaScript, HTML, and CSS as possible.     
     
-
-
+    This game is a basic survivor game where the character has access to a shop. 
+    The goal of the game is to fend off monsters and bandits for as long as possible.
+    Score equated to number of seconds with health > 0. 
 
 ## What I Used
     HTML & CSS, HTML Canvas, JavaScript (code is intentionally written without frameworks)
+
+    AWS S3, Route53 for deployment and making the game run off more than just my local machine.
 
 ## Challenges and Solutions
     
@@ -73,7 +66,8 @@ Village Savior - Rishi Karri
     
 
 ## Demo of gameplay: 
-    https://www.youtube.com/watch?v=kVRCTKB7NRo&feature=youtu.be 
+    http://village-savior.s3-website-us-east-1.amazonaws.com/
+    (canoncial URL coming soon)
 
 
 ## Code Examples
@@ -107,10 +101,7 @@ Village Savior - Rishi Karri
 
         // a for loop that goes through all necessary updates for all goblins
         for (var i = 0; i < goblinArray.length; i++) {
-            if(goblinArray[i].health <= 0){
-                // if the goblin's health is less than 0, there is no need to check to see if it got   //hit by anything, whether it caught our hero or make it move - simply do nothing here
-            }else{
-
+            if(goblinArray[i].health >= 0){
                 //if the goblin has more than 0 health move it and check to see
                 //if it catches our hero, gets hit by a star or gets hit by an arrow         
                 goblinArray[i].move();
@@ -118,7 +109,6 @@ Village Savior - Rishi Karri
                 goblinArray[i].getHitByNinjaStar();
                 goblinArray[i].getHitByArrow();         
             }
-            
         }
 
 
