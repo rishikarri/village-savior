@@ -15,6 +15,11 @@ Village Savior - Rishi Karri
     The goal of the game is to fend off monsters and bandits for as long as possible.
     Score equated to number of seconds with health > 0. 
 
+## How to run it locally 
+    
+    1. Clone repo 
+    2. open index.html in a browser 
+
 ## What I Used
     HTML & CSS, HTML Canvas, JavaScript (code is intentionally written without frameworks)
 
