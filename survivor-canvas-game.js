@@ -163,7 +163,7 @@ addEventListener("keydown", function (event) {
 	if (event.keyCode === 65 || event.keyCode === 68)
 
 		keyQueue.push(event.keyCode)
-	console.log('keyQueue', keyQueue)
+	console.log('keyQueue', keyQueue) // @TODO - add logs only if there's LOGLEVEL=DEBUG env var 
 
 	keysPressed[event.keyCode] = true; //this position of the array has a position of true
 })
@@ -218,7 +218,7 @@ function Hero(name, image, speed) {
 
 		// don't let arrow go off map
 		if (this.arrowLocation.x > movementBounds.x2) {
-			console.log("ARROW OFF X MAP")
+			console.log("ARROW OFF X MAP") 
 		}
 
 		if (this.arrowLocation.x < movementBounds.x1) {
