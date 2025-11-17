@@ -449,6 +449,7 @@ class Enemy {
 	constructor(name, health, imageSrc, speed, goldReward) {
 		this.name = name;
 		this.health = health;
+		this.maxHealth = health; // Store max health for health bar calculation
 		this.image = new Image();
 		this.image.src = imageSrc;
 		this.speed = speed;
@@ -603,6 +604,57 @@ class Enemy {
 	getMinScoreForCatch() {
 		return 3; // Default minimum score
 	}
+
+	// Draw health bar underneath the enemy
+	drawHealthBar(ctx) {
+		if (this.health <= 0) return; // Don't draw if dead
+
+		const barWidth = this.getHealthBarWidth(); // Width of the health bar
+		const barHeight = this.getHealthBarHeight(); // Height of the health bar
+		const barOffsetY = this.getHealthBarOffsetY(); // Offset below the enemy sprite
+		const estimatedSpriteWidth = this.image.width || this.getEstimatedSpriteWidth();
+		const barX = this.x + estimatedSpriteWidth / 2 - barWidth / 2; // Center the bar
+		const barY = this.y + barOffsetY;
+
+		// Calculate health percentage
+		const healthPercent = Math.max(0, this.health / this.maxHealth);
+
+		// Draw background (red/dark)
+		ctx.fillStyle = '#8B0000'; // Dark red background
+		ctx.fillRect(barX, barY, barWidth, barHeight);
+
+		// Draw health (green to red gradient based on health)
+		if (healthPercent > 0.5) {
+			ctx.fillStyle = '#00FF00'; // Green when above 50%
+		} else if (healthPercent > 0.25) {
+			ctx.fillStyle = '#FFFF00'; // Yellow when between 25-50%
+		} else {
+			ctx.fillStyle = '#FF0000'; // Red when below 25%
+		}
+		ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
+
+		// Draw border
+		ctx.strokeStyle = '#000000';
+		ctx.lineWidth = 1;
+		ctx.strokeRect(barX, barY, barWidth, barHeight);
+	}
+
+	// Methods to override for custom health bar sizes
+	getHealthBarWidth() {
+		return 40; // Default width
+	}
+
+	getHealthBarHeight() {
+		return 4; // Default height
+	}
+
+	getHealthBarOffsetY() {
+		return 35; // Default offset below sprite
+	}
+
+	getEstimatedSpriteWidth() {
+		return 32; // Default estimated sprite width
+	}
 }
 
 class Goblin extends Enemy {
@@ -733,6 +785,23 @@ class Golem extends Enemy {
 
 	getNinjaStarHitboxY() {
 		return 70;
+	}
+
+	// Override health bar size for golem (larger enemy)
+	getHealthBarWidth() {
+		return 60; // Larger bar for golem
+	}
+
+	getHealthBarHeight() {
+		return 5; // Slightly taller bar
+	}
+
+	getHealthBarOffsetY() {
+		return 50; // More offset for larger sprite
+	}
+
+	getEstimatedSpriteWidth() {
+		return 50; // Golem is larger
 	}
 
 	// Override changeSpeed to add golem-specific speed changes
@@ -1294,6 +1363,7 @@ function draw() {
 
 		if (goblinArray[i].health > 0) {
 			context.drawImage(goblinArray[i].image, goblinArray[i].x, goblinArray[i].y);
+			goblinArray[i].drawHealthBar(context);
 		}
 	}
 	// Draw the bandit on the page
@@ -1301,6 +1371,7 @@ function draw() {
 	for (var i = 0; i < banditArray.length; i++) {
 		if (banditArray[i].health > 0) {
 			context.drawImage(banditArray[i].image, banditArray[i].x, banditArray[i].y);
+			banditArray[i].drawHealthBar(context);
 		}
 	}
 
@@ -1308,7 +1379,7 @@ function draw() {
 
 		if (golemArray[i].health > 0) {
 			context.drawImage(golemArray[i].image, golemArray[i].x, golemArray[i].y);
-
+			golemArray[i].drawHealthBar(context);
 		}
 	}
 
