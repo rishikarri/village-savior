@@ -44,7 +44,7 @@ function deleteObjectByKey(obj, keyToDelete) {
 
   
 
-
+// GLOBAL VARS
 let useFireArrows = false; 
 var score = 0;
 
@@ -84,16 +84,16 @@ function monsterIntervalManager(clearMe) {
 
 	if (clearMe) {
 		clearInterval(goblinInterval);
-		clearInterval(thugInterval);
+		clearInterval(banditInterval);
 		clearInterval(golemInterval);
 	} else {
 		//clear interval and then set it incase user presses resume multiple times
 		clearInterval(goblinInterval);
-		clearInterval(thugInterval);
+		clearInterval(banditInterval);
 		clearInterval(golemInterval);
 
 		goblinInterval = setInterval(generateGoblin, 5000);
-		thugInterval = setInterval(generateThug, 7000);
+		banditInterval = setInterval(generateBandit, 7000);
 		golemInterval = setInterval(generateGolem, 35000);
 	}
 }
@@ -446,99 +446,57 @@ class Arrow {
 
 
 class Enemy {
-	constructor() {
-
+	constructor(name, health, imageSrc, speed, goldReward) {
+		this.name = name;
+		this.health = health;
+		this.image = new Image();
+		this.image.src = imageSrc;
+		this.speed = speed;
+		this.goldReward = goldReward;
+		this.x = Math.random() * 440 + 40;
+		this.y = Math.random() * 400 + 20;
 	}
+
 	showHeroHurtOverlay = function () {
 		document.getElementById("hurtByEnemy").style.opacity = .5;
 		setTimeout(() => {
 			document.getElementById("hurtByEnemy").style.opacity = 0;
 		}, 200)
 	}
-}
 
-class Goblin extends Enemy {
-	constructor(name) {
-		super()
-		this.name = name;
-		this.health = 6;
-		this.image = new Image();
-		this.image.src = "possible-enemies-allies/royalty goblin.png"
-		this.speed = 1;
-		this.x = Math.random() * 440 + 40;;
-		this.y = Math.random() * 400 + 20;
-		this.destinationX = Math.random() * 440 + 40;
-		this.destinationY = Math.random() * 400 + 20;
-		this.move = function () {
-			if (Math.abs(this.x - this.destinationX) < 32) {
-				this.destinationX = Math.random() * 440 + 40;
-			} else if (this.x < this.destinationX) {
-				this.x += 2.94 * this.speed;
-				this.image.src = "possible-enemies-allies/royalty-goblin-right.png";
-			} else {
-				this.x -= 2.94 * this.speed;
-				this.image.src = "possible-enemies-allies/royalty goblin-left.png";
-			}
-
-			if (Math.abs(this.y - this.destinationY) < 32) {
-				this.destinationY = Math.random() * 400 + 20;
-			} else if (this.y > this.destinationY) {
-				this.y -= 2.94 * this.speed;
-			} else {
-				this.y += 2.94 * this.speed;
-			}
-		}
-	}
-
-	catchRobinHood = function () {
-
-		if (score > 3) {
-			// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
-			if (
-				Math.abs((this.x - robinHood.x)) < 24
-				&& Math.abs(this.y - robinHood.y) < 24
-			) {
-				this.showHeroHurtOverlay()
-				//robin hoood got hit
-				this.x = Math.random() * 440 + 40;
-				this.y = Math.random() * 400 + 20;
-				robinHood.health--;
-	
-				document.getElementById("health").innerHTML = robinHood.health;
-			}
-		}
-
-	}
+	// Common method for checking arrow collisions - can be overridden for different hitboxes
 	getHitByArrow = function () {
 		let currentArrow;
 		for (const key in arrows) {
-
-			currentArrow = arrows[key]
+			currentArrow = arrows[key];
+			const hitboxX = this.getArrowHitboxX();
+			const hitboxY = this.getArrowHitboxY();
 
 			if (
-				Math.abs(currentArrow.arrowLocation.x - this.x) < 15
-				&& Math.abs(currentArrow.arrowLocation.y - this.y) < 28
+				Math.abs(currentArrow.arrowLocation.x - this.x) < hitboxX
+				&& Math.abs(currentArrow.arrowLocation.y - this.y) < hitboxY
 			) {
 				if (!currentArrow.hitEnemy) {
 					this.health -= arrowDamage;
 					currentArrow.hitEnemy = true;
-					deleteObjectByKey(arrows, this.id);
+					deleteObjectByKey(arrows, currentArrow.id);
 					this.changeSpeed();
 				}
-				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
 			}
 		}
-
 	}
 
+	// Common method for checking ninja star collisions - can be overridden for different hitboxes
 	getHitByNinjaStar = function () {
 		for (var i = 0; i < ninjaArray.length; i++) {
+			const hitboxX = this.getNinjaStarHitboxX();
+			const hitboxY = this.getNinjaStarHitboxY();
+
 			if (
-				Math.abs(ninjaArray[i].ninjaStarLocation.x - this.x) < 15
-				&& Math.abs(ninjaArray[i].ninjaStarLocation.y - this.y) < 30
+				Math.abs(ninjaArray[i].ninjaStarLocation.x - this.x) < hitboxX
+				&& Math.abs(ninjaArray[i].ninjaStarLocation.y - this.y) < hitboxY
 				&& ninjaArray[i].throwing === true
 			) {
-				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
 				this.health -= ninjaStarDamage;
 				ninjaArray[i].throwing = false;
 				ninjaArray[i].stopThrowing();
@@ -547,280 +505,238 @@ class Goblin extends Enemy {
 		}
 	}
 
+	// Common method for catching robin hood - can be overridden for different thresholds
+	catchRobinHood = function () {
+		const thresholdX = this.getCatchThresholdX();
+		const thresholdY = this.getCatchThresholdY();
+		const minScore = this.getMinScoreForCatch();
 
-	//changes the speed of the goblin and changes them to a coin if dead
-	changeSpeed = function () {
+		if (score > minScore) {
+			if (
+				Math.abs((this.x - robinHood.x)) < thresholdX
+				&& Math.abs(this.y - robinHood.y) < thresholdY
+			) {
+				this.showHeroHurtOverlay();
+				this.x = Math.random() * 440 + 40;
+				this.y = Math.random() * 400 + 20;
+				robinHood.health--;
+				document.getElementById("health").innerHTML = robinHood.health;
+			}
+		}
+	}
+
+	// Abstract methods to be overridden by subclasses
+	move() {
+		throw new Error("move() must be implemented by subclass");
+	}
+
+	changeSpeed() {
+		// Default implementation - handle death
+		if (this.health <= 0) {
+			this.image.src = "";
+			robinHood.gold += this.goldReward;
+			document.getElementById("gold-collected").innerHTML = robinHood.gold;
+			document.getElementById("textDisplay").style.color = "goldenRod";
+			document.getElementById("textDisplay").innerHTML = "You collected " + this.goldReward + " gold!";
+			setTimeout(clearDisplay, 3000);
+		}
+	}
+
+	// Methods to override for different hitboxes and thresholds
+	getArrowHitboxX() {
+		return 15; // Default hitbox
+	}
+
+	getArrowHitboxY() {
+		return 28; // Default hitbox
+	}
+
+	getNinjaStarHitboxX() {
+		return 15; // Default hitbox
+	}
+
+	getNinjaStarHitboxY() {
+		return 30; // Default hitbox
+	}
+
+	getCatchThresholdX() {
+		return 24; // Default threshold
+	}
+
+	getCatchThresholdY() {
+		return 24; // Default threshold
+	}
+
+	getMinScoreForCatch() {
+		return 3; // Default minimum score
+	}
+}
+
+class Goblin extends Enemy {
+	constructor(name) {
+		super(name, 6, "possible-enemies-allies/royalty goblin.png", 1, 5);
+		this.destinationX = Math.random() * 440 + 40;
+		this.destinationY = Math.random() * 400 + 20;
+	}
+
+	move() {
+		if (Math.abs(this.x - this.destinationX) < 32) {
+			this.destinationX = Math.random() * 440 + 40;
+		} else if (this.x < this.destinationX) {
+			this.x += 2.94 * this.speed;
+			this.image.src = "possible-enemies-allies/royalty-goblin-right.png";
+		} else {
+			this.x -= 2.94 * this.speed;
+			this.image.src = "possible-enemies-allies/royalty goblin-left.png";
+		}
+
+		if (Math.abs(this.y - this.destinationY) < 32) {
+			this.destinationY = Math.random() * 400 + 20;
+		} else if (this.y > this.destinationY) {
+			this.y -= 2.94 * this.speed;
+		} else {
+			this.y += 2.94 * this.speed;
+		}
+	}
+
+	// Override changeSpeed to add goblin-specific speed changes
+	changeSpeed() {
 		if (this.health == 2) {
 			this.speed = .7;
 		} else if (this.health == 1) {
 			this.speed = .2;
 		} else if (this.health <= 0) {
-			var goblinNumber = this.name.slice(6);
-
-			//change property in goblin array to do nothing
-			// goblinArray[goblinNumber] = "do nothing";
-
-			// change image source to nothing and increase gold
-			this.image.src = "";
-			robinHood.gold += 5;
-			document.getElementById("gold-collected").innerHTML = robinHood.gold;
-
-			// CHANGE TEXT DISPLAY TO GOLD BEFOE DISPLAYING
-			document.getElementById("textDisplay").style.color = "goldenRod";
-			document.getElementById("textDisplay").innerHTML = "You collected " + 5 + " gold!";
-
-			// clear the text display after 3 seconds
-			setTimeout(clearDisplay, 3000);
+			// Call parent implementation for death handling
+			super.changeSpeed();
 		}
 	}
-
 }
 
-class Thug extends Enemy {
+class Bandit extends Enemy {
 	constructor(name) {
-		super()
-		this.name = name;
-		this.health = 12;
-		this.image = new Image();
-		this.image.src = "possible-enemies-allies/thug.png";
-		this.speed = 1;
-		this.x = this.x = Math.random() * 440 + 40;
-		this.y = this.y = Math.random() * 400 + 20;
-		this.move = function () {
-			if (Math.abs(this.x - robinHood.x) < 18) {
-				this.catchRobinHood();
-			} else if (this.x <= robinHood.x) {
-				this.x += 2 * this.speed;
-				this.image.src = "possible-enemies-allies/thug.png";
-			} else {
-				this.x -= 2 * this.speed;
-				this.image.src = "possible-enemies-allies/thug-left.png";
-			}
+		super(name, 12, "possible-enemies-allies/thug.png", 1, 7);
+	}
 
-			if (Math.abs(this.y - robinHood.y) < 24) {
-				this.catchRobinHood();
-			} else if (this.y > robinHood.y) {
-				this.y -= 2 * this.speed;
+	move() {
+		if (Math.abs(this.x - robinHood.x) < 18) {
+			this.catchRobinHood();
+		} else if (this.x <= robinHood.x) {
+			this.x += 2 * this.speed;
+			this.image.src = "possible-enemies-allies/thug.png";
+		} else {
+			this.x -= 2 * this.speed;
+			this.image.src = "possible-enemies-allies/thug-left.png";
+		}
 
-
-			} else {
-				this.y += 2 * this.speed;
-			}
+		if (Math.abs(this.y - robinHood.y) < 24) {
+			this.catchRobinHood();
+		} else if (this.y > robinHood.y) {
+			this.y -= 2 * this.speed;
+		} else {
+			this.y += 2 * this.speed;
 		}
 	}
 
-
-	catchRobinHood = function () {
-		if (score > 3) {
-			// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
-			if (
-				Math.abs((this.x - robinHood.x)) < 18
-				&& Math.abs(this.y - robinHood.y) < 24
-			) {
-				this.showHeroHurtOverlay();
-				//generate new location if you hit him
-				//robin hoood got hit
-				this.x = Math.random() * 440 + 40;
-				this.y = Math.random() * 400 + 20;
-				robinHood.health--;
-				document.getElementById("health").innerHTML = robinHood.health;
-			}
-		}
-
+	// Override catch thresholds for bandit
+	getCatchThresholdX() {
+		return 18;
 	}
 
-	getHitByArrow = function () {
-		let currentArrow;
-		for (const key in arrows) {
-
-			currentArrow = arrows[key]
-
-			if (
-				Math.abs(currentArrow.arrowLocation.x - this.x) < 15
-				&& Math.abs(currentArrow.arrowLocation.y - this.y) < 28
-			) {
-				if (!currentArrow.hitEnemy) {
-					this.health -= arrowDamage;
-					currentArrow.hitEnemy = true;
-					deleteObjectByKey(arrows, this.id);
-					this.changeSpeed();
-				}
-				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-			}
-		}
-
+	getCatchThresholdY() {
+		return 24;
 	}
 
-	getHitByNinjaStar = function () {
-		for (var i = 0; i < ninjaArray.length; i++) {
-			if (
-				Math.abs(ninjaArray[i].ninjaStarLocation.x - this.x) < 15
-				&& Math.abs(ninjaArray[i].ninjaStarLocation.y - this.y) < 30
-				&& ninjaArray[i].throwing === true
-			) {
-				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-				this.health -= ninjaStarDamage;
-				ninjaArray[i].throwing = false;
-				ninjaArray[i].stopThrowing();
-				this.changeSpeed();
-			}
-		}
-	}
-	//changes the speed of the goblin and changes them to a coin if dead
-	changeSpeed = function () {
+	// Override changeSpeed to add bandit-specific speed changes
+	changeSpeed() {
 		if (this.health == 5) {
 			this.speed = .7;
 		} else if (this.health == 3) {
 			this.speed = .3;
 		} else if (this.health == 1) {
 			this.speed = .05;
-		}
-		else if (this.health <= 0) {
-			// var thugNumber = this.name.slice(4);			
-
-			//change property in thug array to do nothing
-			// thugArray[thugNumber] = "do nothing";
-
-			// change image source to nothing and increase gold
-			this.image.src = "";
-			robinHood.gold += 7;
-			document.getElementById("gold-collected").innerHTML = robinHood.gold;
-
-			//display the amount of gold Collected for 2 seconds
-			document.getElementById("textDisplay").style.color = "goldenRod";
-			document.getElementById("textDisplay").innerHTML = "You collected " + 7 + " gold!";
-
-			// clear the text display after 2 seconds
-			setTimeout(clearDisplay, 3000); //update the counter every second
-
+		} else if (this.health <= 0) {
+			// Call parent implementation for death handling
+			super.changeSpeed();
 		}
 	}
-
 }
 //let's create a golem
 class Golem extends Enemy {
-
 	constructor(name) {
-		super()
-		this.name = name;
-		this.health = 120;
-		this.image = new Image();
-		this.image.src = "possible-enemies-allies/golem1.png";
-		this.speed = 1.2;
+		super(name, 120, "possible-enemies-allies/golem1.png", 1.2, 200);
 		this.x = 300;
 		this.y = 200;
-		this.move = function () {
-			if (Math.abs(this.x - robinHood.x) < 32) {
-				this.catchRobinHood();
-			} else if (this.x < robinHood.x) {
-				this.x += 1.3 * this.speed;
-				this.image.src = "possible-enemies-allies/golem1.png";
-			} else {
-				this.x -= 1.3 * this.speed;
-				this.image.src = "possible-enemies-allies/golem-face-left.png";
-			}
+	}
 
-			if (Math.abs(this.y - robinHood.y) < 32) {
-				this.catchRobinHood();
-			} else if (this.y > robinHood.y) {
-				this.y -= 1.3 * this.speed;
-			} else {
-				this.y += 1.3 * this.speed;
-			}
+	move() {
+		if (Math.abs(this.x - robinHood.x) < 32) {
+			this.catchRobinHood();
+		} else if (this.x < robinHood.x) {
+			this.x += 1.3 * this.speed;
+			this.image.src = "possible-enemies-allies/golem1.png";
+		} else {
+			this.x -= 1.3 * this.speed;
+			this.image.src = "possible-enemies-allies/golem-face-left.png";
+		}
+
+		if (Math.abs(this.y - robinHood.y) < 32) {
+			this.catchRobinHood();
+		} else if (this.y > robinHood.y) {
+			this.y -= 1.3 * this.speed;
+		} else {
+			this.y += 1.3 * this.speed;
 		}
 	}
 
-	catchRobinHood = function () {
-		// if this goblin is within 32 of robinhood, robinhood gets hurt unless goblin is a coin
-		if (
-			Math.abs((this.x - robinHood.x)) < 32
-			&& Math.abs(this.y - robinHood.y) < 32
-		) {
-			this.showHeroHurtOverlay();
-			//generate new location if you hit him
-			//robin hoood got hit
-			this.x = Math.random() * 440 + 40;
-			this.y = Math.random() * 400 + 20;
-			robinHood.health--;
-
-			document.getElementById("health").innerHTML = robinHood.health;
-		}
-
+	// Override catch thresholds for golem
+	getCatchThresholdX() {
+		return 32;
 	}
 
-	getHitByArrow = function () {
-		let currentArrow;
-		for (const key in arrows) {
-
-			currentArrow = arrows[key]
-
-			if (
-				Math.abs(currentArrow.arrowLocation.x - this.x) < 30
-				&& Math.abs(currentArrow.arrowLocation.y - this.y) < 70
-			) {
-				if (!currentArrow.hitEnemy) {
-					this.health -= arrowDamage;
-					currentArrow.hitEnemy = true;
-					deleteObjectByKey(arrows, this.id);
-					this.changeSpeed();
-				}
-				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-			}
-		}
-
+	getCatchThresholdY() {
+		return 32;
 	}
 
-	getHitByNinjaStar = function () {
-
-		for (var i = 0; i < ninjaArray.length; i++) {
-			if (
-				Math.abs(ninjaArray[i].ninjaStarLocation.x - this.x) < 20
-				&& Math.abs(ninjaArray[i].ninjaStarLocation.y - this.y) < 70
-				&& ninjaArray[i].throwing === true
-			) {
-				// if the goblin gets hit by the arrow, it loses health, robinhood stops shooting and teh goblin slows
-				this.health -= ninjaStarDamage;
-				ninjaArray[i].throwing = false;
-				ninjaArray[i].stopThrowing();
-				this.changeSpeed();
-			}
-		}
-
+	// Override min score - golems can catch immediately
+	getMinScoreForCatch() {
+		return 0;
 	}
 
-	//changes the speed of the goblin and adds gold if dead
+	// Override hitboxes for golem (larger enemy)
+	getArrowHitboxX() {
+		return 30;
+	}
 
+	getArrowHitboxY() {
+		return 70;
+	}
 
-	changeSpeed = function () {
+	getNinjaStarHitboxX() {
+		return 20;
+	}
+
+	getNinjaStarHitboxY() {
+		return 70;
+	}
+
+	// Override changeSpeed to add golem-specific speed changes
+	changeSpeed() {
 		if (this.health == 50) {
 			this.speed = .4;
 		} else if (this.health == 20) {
 			this.speed = .2;
 		} else if (this.health == 5) {
 			this.speed = .05;
-		}
-		else if (this.health <= 0) {
-			// var golemNumber = this.name.slice(5);
-
-
-			//change property in thug array to do nothing
-			// golemArray[golemNumber] = "do nothing";
-
-			// change image source to nothing and increase gold
+		} else if (this.health <= 0) {
+			// Override death message for golem
 			this.image.src = "";
-			robinHood.gold += 200;
+			robinHood.gold += this.goldReward;
 			document.getElementById("gold-collected").innerHTML = robinHood.gold;
-
-			//display the amount of gold Collected for 2 seconds
 			document.getElementById("textDisplay").style.color = "goldenRod";
 			document.getElementById("textDisplay").innerHTML = "You collected " + 40 + " gold!";
-
-			// clear the text display after 3 seconds
-			setTimeout(clearDisplay, 3000); //update the counter every second
-
+			setTimeout(clearDisplay, 3000);
 		}
 	}
-
 }
 
 
@@ -980,7 +896,7 @@ function clearDisplay() {
 
 
 // ----------------------GOBLINS-----------------------------
-var goblinInterval, thugInterval, golemInterval;
+var goblinInterval, banditInterval, golemInterval;
 
 
 
@@ -1007,21 +923,21 @@ function generateGoblin() {
 var goblinArray = [];
 goblinArray.push(goblin0, goblin1);
 
-// ----------------------THUGS-----------------------------
-// var thugInterval = setInterval(generateThugNumber, 7000);
+// ----------------------BANDITS-----------------------------
+// var banditInterval = setInterval(generateBanditNumber, 7000);
 
 
-var thugArray = [];
-var thug0 = new Thug("thug0");
-thugArray.push(thug0);
-var thugNumber = 1;
+var banditArray = [];
+var bandit0 = new Bandit("bandit0");
+banditArray.push(bandit0);
+var banditNumber = 1;
 
 
-function generateThug() {
-	var newThugName = "thug" + thugNumber;
-	var newThug = new Thug(newThugName);
-	thugArray.push(newThug);
-	thugNumber++
+function generateBandit() {
+	var newBanditName = "bandit" + banditNumber;
+	var newBandit = new Bandit(newBanditName);
+	banditArray.push(newBandit);
+	banditNumber++
 
 }
 // ----------------------GOLEMS-----------------------------
@@ -1267,16 +1183,16 @@ function update() {
 		}
 
 	}
-	//a for loop that goes through all necessary updates for all thugs
-	for (var i = 0; i < thugArray.length; i++) {
+	//a for loop that goes through all necessary updates for all bandits
+	for (var i = 0; i < banditArray.length; i++) {
 
-		if (thugArray[i].health <= 0) {
-			//do not move or allow this thug to get hit by arrows/ninja stars if his health is less than or equal to 0
+		if (banditArray[i].health <= 0) {
+			//do not move or allow this bandit to get hit by arrows/ninja stars if his health is less than or equal to 0
 		} else {
 			// if it has greater than 0 health, it can move, get hit by ninja stars or catch robinhood
-			thugArray[i].move();
-			thugArray[i].getHitByArrow();
-			thugArray[i].getHitByNinjaStar();
+			banditArray[i].move();
+			banditArray[i].getHitByArrow();
+			banditArray[i].getHitByNinjaStar();
 		}
 	}
 
@@ -1364,11 +1280,11 @@ function draw() {
 			context.drawImage(goblinArray[i].image, goblinArray[i].x, goblinArray[i].y);
 		}
 	}
-	// Draw the thug on the page
+	// Draw the bandit on the page
 
-	for (var i = 0; i < thugArray.length; i++) {
-		if (thugArray[i].health > 0) {
-			context.drawImage(thugArray[i].image, thugArray[i].x, thugArray[i].y);
+	for (var i = 0; i < banditArray.length; i++) {
+		if (banditArray[i].health > 0) {
+			context.drawImage(banditArray[i].image, banditArray[i].x, banditArray[i].y);
 		}
 	}
 
