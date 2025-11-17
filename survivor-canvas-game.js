@@ -140,12 +140,6 @@ function resumeGame() {
 	// var thugInterval = setInterval(generateThugNumber, 7000);
 }
 
-function openShop() {
-	// pause ggame so it's not running in the background
-	gameOn = false;
-	monsterIntervalManager(false);
-
-}
 
 
 
@@ -160,9 +154,19 @@ addEventListener("keyup", function (event) {
 })
 //anonymous functions to pass moveRobinhood commands 
 addEventListener("keydown", function (event) {
-	if (event.keyCode === 65 || event.keyCode === 68)
+	// Handle S key to open shop
+	if (event.keyCode === 83) { // S key
+		if (!gamePaused && gameOn) {
+			openShop();
+			checkPurchasingAbility();
+		}
+		return;
+	}
 
+	// Only add to keyQueue if key wasn't already pressed (prevents key repeat from bypassing cooldown)
+	if ((event.keyCode === 65 || event.keyCode === 68) && !keysPressed[event.keyCode]) {
 		keyQueue.push(event.keyCode)
+	}
 	console.log('keyQueue', keyQueue) // @TODO - add logs only if there's LOGLEVEL=DEBUG env var 
 
 	keysPressed[event.keyCode] = true; //this position of the array has a position of true
@@ -185,6 +189,9 @@ function Hero(name, image, speed) {
 	this.faceLeft = false;
 	this.arrowImage = new Image();
 	this.arrowImage.src = "Images/arrow-right.png";
+	// Cooldown for shooting when holding keys
+	this.lastShotTime = 0;
+	this.shootCooldown = 250; // milliseconds between shots when holding
 	// this function will have the arrow follow the hero if he is not shooting
 	this.arrowFollow = function () {
 		if (this.faceLeft) {
@@ -272,90 +279,108 @@ function Hero(name, image, speed) {
 		}
 	}
 
-	this.shoot = function (keyQueue) {
+	this.shoot = function (keyQueue, keysPressed) {
 		console.log('keyQueue', keyQueue)
-		// if (65 in keyQueue && 68 in keyQueue) {
-		// 	// if the user is pressing both keys return the arrow to robinhood - they can't shoot left and right at the same time!!
-		// 	this.stopShooting();
-		// }
+		const currentTime = Date.now();
+		const dKey = 68;
+		const aKey = 65;
 
-
+		// Handle keyQueue (initial key presses - only if not in cooldown)
 		if (keyQueue.length > 0) {
+			const keyPressed = keyQueue.pop();
 
-			const dKey = 68
-			const aKey = 65
+			// Only shoot if cooldown has passed
+			if (currentTime - this.lastShotTime >= this.shootCooldown || this.lastShotTime === 0) {
+				console.log(keyPressed, 'keypressed')
+				if (keyPressed == dKey) {
+					console.log('shooting function')
+					const arrowId = generateUniqueId();
+					const newArrowRight = new Arrow(arrowId, robinHood.x - 1, robinHood.y + 18, robinHood.x + 450, 'RIGHT');
+					arrows[arrowId] = newArrowRight;
+					this.lastShotTime = currentTime;
 
-			const keyPressed = keyQueue.pop()
-
-			console.log(keyPressed, 'keypressed')
-			if (keyPressed == dKey) {
-				console.log('shooting function')
-				//shooting prevents arrow from moving with character
-				// if the spacebar is hit, shoot the arrow 50 pixels right, user can hold it to make it go farther
-				let addDistanceCounter = 1;
-
-				const arrowId = generateUniqueId();
-				const newArrowRight = new Arrow(arrowId, robinHood.x - 1, robinHood.y + 18, robinHood.x + 450, 'RIGHT')
-
-				arrows[arrowId] = newArrowRight
-
-				console.log('arrows', arrows)
-
-				// this.arrowLocation.destinationX = this.arrowLocation.x + 450;
-
-				// console.log('this.arrowLocation', this.arrowLocation)
-
-
-				// change image source and make sure the character is facing right
-				this.image.src = "possible-enemies-allies/archer3.png";
-				this.faceLeft = false;
-				if (arrowDamage === 2) {
-					this.arrowImage.src = "Images/flaming-arrow2.png";
-				} else {
-					this.arrowImage.src = "Images/arrow-right.png";
+					// change image source and make sure the character is facing right
+					this.image.src = "possible-enemies-allies/archer3.png";
+					this.faceLeft = false;
+					if (arrowDamage === 2) {
+						this.arrowImage.src = "Images/flaming-arrow2.png";
+					} else {
+						this.arrowImage.src = "Images/arrow-right.png";
+					}
 				}
 
-			}
+				if (keyPressed == aKey) {
+					const arrowId = generateUniqueId();
+					const newArrow = new Arrow(arrowId, robinHood.x - 4, robinHood.y + 18, robinHood.x - 450, 'LEFT');
+					arrows[arrowId] = newArrow;
+					this.lastShotTime = currentTime;
 
-			if (keyPressed == aKey) {
+					// change the image source and make sure the character is shooting left
+					this.image.src = "possible-enemies-allies/archer3-left.png";
+					this.faceLeft = true;
 
-
-
-				const arrowId = generateUniqueId();
-				const newArrow = new Arrow(arrowId, robinHood.x - 4, robinHood.y + 18, robinHood.x - 450, 'LEFT')
-
-				arrows[arrowId] = newArrow
-
-
-
-				// change the image source and make sure the character is shooting left
-				this.image.src = "possible-enemies-allies/archer3-left.png";
-				this.faceLeft = true;
-
-				if (arrowDamage == 2) {
-					this.arrowImage.src = "Images/flaming-arrow2 left.png"
-				} else {
-					this.arrowImage.src = "Images/arrow-left.png";
+					if (arrowDamage == 2) {
+						this.arrowImage.src = "Images/flaming-arrow2 left.png"
+					} else {
+						this.arrowImage.src = "Images/arrow-left.png";
+					}
 				}
-
 			}
-
 		}
 
-		if (keyQueue.indexOf(65) !== -1) {
-			this.arrowLocation.destinationX = this.arrowLocation.x - 200;
+		// Handle held keys with cooldown (slower shooting when holding)
+		if (keysPressed && (aKey in keysPressed || dKey in keysPressed)) {
+			if (currentTime - this.lastShotTime >= this.shootCooldown) {
+				if (aKey in keysPressed) {
+					const arrowId = generateUniqueId();
+					const newArrow = new Arrow(arrowId, robinHood.x - 4, robinHood.y + 18, robinHood.x - 450, 'LEFT');
+					arrows[arrowId] = newArrow;
+					this.lastShotTime = currentTime;
 
+					// change the image source and make sure the character is shooting left
+					this.image.src = "possible-enemies-allies/archer3-left.png";
+					this.faceLeft = true;
 
-			// change the image source and make sure the character is shooting left
+					if (arrowDamage == 2) {
+						this.arrowImage.src = "Images/flaming-arrow2 left.png"
+					} else {
+						this.arrowImage.src = "Images/arrow-left.png";
+					}
+				} else if (dKey in keysPressed) {
+					const arrowId = generateUniqueId();
+					const newArrowRight = new Arrow(arrowId, robinHood.x - 1, robinHood.y + 18, robinHood.x + 450, 'RIGHT');
+					arrows[arrowId] = newArrowRight;
+					this.lastShotTime = currentTime;
+
+					// change image source and make sure the character is facing right
+					this.image.src = "possible-enemies-allies/archer3.png";
+					this.faceLeft = false;
+					if (arrowDamage === 2) {
+						this.arrowImage.src = "Images/flaming-arrow2.png";
+					} else {
+						this.arrowImage.src = "Images/arrow-right.png";
+					}
+				}
+			}
+		}
+
+		// Update sprite direction when holding keys (for visual feedback)
+		if (keysPressed && aKey in keysPressed) {
 			this.image.src = "possible-enemies-allies/archer3-left.png";
 			this.faceLeft = true;
-
 			if (arrowDamage == 2) {
 				this.arrowImage.src = "Images/flaming-arrow2 left.png"
 			} else {
 				this.arrowImage.src = "Images/arrow-left.png";
 			}
-
+		} else if (keysPressed && dKey in keysPressed) {
+			this.image.src = "possible-enemies-allies/archer3.png";
+			this.faceLeft = false;
+			if (arrowDamage === 2) {
+				this.arrowImage.src = "Images/flaming-arrow2.png";
+			} else {
+				this.arrowImage.src = "Images/arrow-right.png";
+			}
 		}
 	}
 	// this.shoot = throttle(this._shoot.bind(this), 500);
@@ -1235,7 +1260,7 @@ function update() {
 	robinHood.move(keysPressed);
 	// robinHood.arrowMove()
 	// robinHood.shoot(keysPressed);
-	robinHood.shoot(keyQueue);
+	robinHood.shoot(keyQueue, keysPressed);
 	robinHood.arrowFollow();
 	checkGameStatus(robinHood.health);
 	checkIfHighScore();
