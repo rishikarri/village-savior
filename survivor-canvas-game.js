@@ -94,7 +94,7 @@ function monsterIntervalManager(clearMe) {
 
 		goblinInterval = setInterval(generateGoblin, 5000);
 		banditInterval = setInterval(generateBandit, 7000);
-		golemInterval = setInterval(generateGolem, 35000);
+		golemInterval = setInterval(generateGolem, 20000);
 	}
 }
 
@@ -827,7 +827,7 @@ class Golem extends Enemy {
 
 // NINJA CONSTRUCTOR!!! 
 //RK to come back and make this a prototype
-var ninjaStarDamage = 40;
+var ninjaStarDamage = 4;
 
 function Ninja(name) {
 	this.name = name;
