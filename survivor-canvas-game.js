@@ -525,9 +525,42 @@ class Enemy {
 		}
 	}
 
-	// Abstract methods to be overridden by subclasses
+	// Default move implementation - chases the hero
+	// Can be overridden by subclasses for different movement patterns
 	move() {
-		throw new Error("move() must be implemented by subclass");
+		const moveSpeed = this.getMoveSpeed();
+		const thresholdX = this.getCatchThresholdX();
+		const thresholdY = this.getCatchThresholdY();
+
+		// Check X direction
+		if (Math.abs(this.x - robinHood.x) < thresholdX) {
+			this.catchRobinHood();
+		} else if (this.x < robinHood.x) {
+			this.x += moveSpeed * this.speed;
+			this.updateSpriteDirection('right');
+		} else {
+			this.x -= moveSpeed * this.speed;
+			this.updateSpriteDirection('left');
+		}
+
+		// Check Y direction
+		if (Math.abs(this.y - robinHood.y) < thresholdY) {
+			this.catchRobinHood();
+		} else if (this.y > robinHood.y) {
+			this.y -= moveSpeed * this.speed;
+		} else {
+			this.y += moveSpeed * this.speed;
+		}
+	}
+
+	// Helper method to update sprite direction - can be overridden
+	updateSpriteDirection(direction) {
+		// Default implementation - subclasses should override with their specific sprites
+	}
+
+	// Get movement speed multiplier - can be overridden
+	getMoveSpeed() {
+		return 2; // Default movement speed multiplier
 	}
 
 	changeSpeed() {
@@ -617,23 +650,12 @@ class Bandit extends Enemy {
 		super(name, 12, "possible-enemies-allies/thug.png", 1, 7);
 	}
 
-	move() {
-		if (Math.abs(this.x - robinHood.x) < 18) {
-			this.catchRobinHood();
-		} else if (this.x <= robinHood.x) {
-			this.x += 2 * this.speed;
+	// Override sprite direction update for bandit
+	updateSpriteDirection(direction) {
+		if (direction === 'right') {
 			this.image.src = "possible-enemies-allies/thug.png";
 		} else {
-			this.x -= 2 * this.speed;
 			this.image.src = "possible-enemies-allies/thug-left.png";
-		}
-
-		if (Math.abs(this.y - robinHood.y) < 24) {
-			this.catchRobinHood();
-		} else if (this.y > robinHood.y) {
-			this.y -= 2 * this.speed;
-		} else {
-			this.y += 2 * this.speed;
 		}
 	}
 
@@ -668,24 +690,18 @@ class Golem extends Enemy {
 		this.y = 200;
 	}
 
-	move() {
-		if (Math.abs(this.x - robinHood.x) < 32) {
-			this.catchRobinHood();
-		} else if (this.x < robinHood.x) {
-			this.x += 1.3 * this.speed;
+	// Override sprite direction update for golem
+	updateSpriteDirection(direction) {
+		if (direction === 'right') {
 			this.image.src = "possible-enemies-allies/golem1.png";
 		} else {
-			this.x -= 1.3 * this.speed;
 			this.image.src = "possible-enemies-allies/golem-face-left.png";
 		}
+	}
 
-		if (Math.abs(this.y - robinHood.y) < 32) {
-			this.catchRobinHood();
-		} else if (this.y > robinHood.y) {
-			this.y -= 1.3 * this.speed;
-		} else {
-			this.y += 1.3 * this.speed;
-		}
+	// Override move speed for golem (slower movement)
+	getMoveSpeed() {
+		return 1.3;
 	}
 
 	// Override catch thresholds for golem
