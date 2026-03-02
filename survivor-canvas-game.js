@@ -59,18 +59,35 @@ function updateCounter() {
 }
 
 
+// Function to format high score with watermark (blue 'g' and white 'r')
+function formatHighScoreWithWatermark(score, isNewHighScore) {
+	if (isNewHighScore) {
+		// Watermark: 'g' in "High" = blue, 'r' in "Score" = white
+		return "Hi<span style='color: #0066FF; font-weight: bold;'>g</span>h Sco<span style='color: #FFFFFF; background-color: rgba(0,0,0,0.5); padding: 0 1px;'>r</span>e: " + score;
+	} else {
+		return "High Score: " + score;
+	}
+}
+
 var highScore = localStorage.getItem("highScore");
-document.getElementById("highScoreKeeper").innerHTML = "High Score: " + (highScore || 0);
+document.getElementById("highScoreKeeper").innerHTML = formatHighScoreWithWatermark(highScore || 0, false);
 //get the highsore
 function checkIfHighScore() {
 	// convert highScore into a number because it is currently a string
 	highScore = Number(highScore);
 	if (score > highScore) {
 		highScore = score;
-		document.getElementById("highScoreKeeper").innerHTML = "High Score: " + highScore;
+		// Show watermark when new high score is achieved
+		document.getElementById("highScoreKeeper").innerHTML = formatHighScoreWithWatermark(highScore, true);
 		localStorage.setItem("highScore", highScore);
+		
+		// Show message about screenshot
+		document.getElementById("textDisplay").innerHTML = "NEW HIGH SCORE! Screenshot the score display and email it!";
+		document.getElementById("textDisplay").style.color = "gold";
+		setTimeout(clearDisplay, 5000);
 	} else {
-		document.getElementById("highScoreKeeper").innerHTML = "High Score: " + highScore;
+		// Normal display (no watermark)
+		document.getElementById("highScoreKeeper").innerHTML = formatHighScoreWithWatermark(highScore, false);
 	}
 }
 
@@ -94,7 +111,7 @@ function monsterIntervalManager(clearMe) {
 
 		goblinInterval = setInterval(generateGoblin, 5000);
 		banditInterval = setInterval(generateBandit, 7000);
-		golemInterval = setInterval(generateGolem, 20000);
+		golemInterval = setInterval(generateGolem, 9000);
 	}
 }
 
@@ -167,7 +184,6 @@ addEventListener("keydown", function (event) {
 	if ((event.keyCode === 65 || event.keyCode === 68) && !keysPressed[event.keyCode]) {
 		keyQueue.push(event.keyCode)
 	}
-	console.log('keyQueue', keyQueue) // @TODO - add logs only if there's LOGLEVEL=DEBUG env var 
 
 	keysPressed[event.keyCode] = true; //this position of the array has a position of true
 })
@@ -223,14 +239,6 @@ function Hero(name, image, speed) {
 			y2: 390
 		}
 
-		// don't let arrow go off map
-		if (this.arrowLocation.x > movementBounds.x2) {
-			console.log("ARROW OFF X MAP") 
-		}
-
-		if (this.arrowLocation.x < movementBounds.x1) {
-			console.log("ARROW OFF X2 MAP")
-		}
 
 
 		if (37 in keysPressed) {
@@ -280,7 +288,6 @@ function Hero(name, image, speed) {
 	}
 
 	this.shoot = function (keyQueue, keysPressed) {
-		console.log('keyQueue', keyQueue)
 		const currentTime = Date.now();
 		const dKey = 68;
 		const aKey = 65;
@@ -291,9 +298,7 @@ function Hero(name, image, speed) {
 
 			// Only shoot if cooldown has passed
 			if (currentTime - this.lastShotTime >= this.shootCooldown || this.lastShotTime === 0) {
-				console.log(keyPressed, 'keypressed')
 				if (keyPressed == dKey) {
-					console.log('shooting function')
 					const arrowId = generateUniqueId();
 					const newArrowRight = new Arrow(arrowId, robinHood.x - 1, robinHood.y + 18, robinHood.x + 450, 'RIGHT');
 					arrows[arrowId] = newArrowRight;
@@ -399,7 +404,6 @@ class Arrow {
 		this.hitEnemy = false;
 		this.arrowDirection = arrowDirection;
 		if (useFireArrows) {
-			console.log("FIRE ARROW")
 			if (arrowDirection === "LEFT") {
 				this.image.src = "Images/flaming-arrow2 left.png"
 			} 
@@ -432,36 +436,20 @@ class Arrow {
 		}
 
 		// don't let arrow go off map
-		console.log(this, 'arrows ******')
 		if (this.arrowLocation.x > movementBounds.x2 && this.arrowDirection === 'RIGHT') {
-			console.log("ARROW OFF X MAP")
-
 			deleteObjectByKey(arrows, this.id)
 		}
 
 		if (this.arrowLocation.x < movementBounds.x1) {
-			console.log("ARROW OFF X2 MAP")
 			deleteObjectByKey(arrows, this.id)
 		}
 
 		if (this.arrowLocation.x < this.arrowLocation.destinationX && this.arrowDirection === 'RIGHT') {
-
-			console.log('this.arrowLocation', this.arrowLocation)
 			this.arrowLocation.x += 6;
-			const a = this.arrowLocation.x += 6;
-			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
-
-
 		}
 
 		if (this.arrowLocation.x > this.arrowLocation.destinationX && this.arrowDirection === 'LEFT') {
-
-			console.log('this.arrowLocation', this.arrowLocation)
 			this.arrowLocation.x -= 6;
-			const a = this.arrowLocation.x -= 6;
-			console.log('$$$$$$$$$$$$$$$$$$ARROW LOCATION$', a)
-
-
 		}
 	}
 }
@@ -762,7 +750,7 @@ class Bandit extends Enemy {
 //let's create a golem
 class Golem extends Enemy {
 	constructor(name) {
-		super(name, 120, "possible-enemies-allies/golem1.png", 1.2, 200);
+		super(name, 120, "possible-enemies-allies/golem1.png", 1.8, 200);
 		this.x = 300;
 		this.y = 200;
 	}
@@ -967,7 +955,6 @@ function Ninja(name) {
 
 
 	this.stopThrowing = function () {
-		console.log("hi");
 		this.throwing = false;
 		this.ninjaStarFollow();
 		// this.throwStar = false;
@@ -1105,9 +1092,17 @@ const startGameButton = document.getElementById('start-game-button');
 	modalInstructions.style.display = "none";
   });
 
+// Handle clicking outside modals to close them
 window.onclick = function (event) {
 	if (event.target == modalInstructions) {
 		modalInstructions.style.display = "none";
+	}
+	if (event.target == modalShop) {
+		modalShop.style.display = "none";
+	}
+	if (event.target == modalHighScores) {
+		modalHighScores.style.display = "none";
+		resumeGame();
 	}
 }
 
@@ -1135,10 +1130,69 @@ leaveShop.onclick = function () {
 	resumeGame()
 }
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-	if (event.target == modalShop) {
-		modalShop.style.display = "none";
+// ----------------------------------------------------------
+// ----------------High Scores Section here------------------
+// ----------------------------------------------------------
+
+var modalHighScores = document.getElementById('modal-high-scores');
+var closeHighScores = document.getElementsByClassName("close-high-scores")[0];
+
+function viewHighScores() {
+	modalHighScores.style.display = "block";
+	pauseGame();
+	loadHighScores();
+}
+
+function loadHighScores() {
+	// For now, we'll use a placeholder. Later you can load from S3
+	// This will be updated when you manually update the S3 bucket
+	const highScoresList = document.getElementById('high-scores-list');
+	
+	// Example high scores (you'll replace this with data from S3)
+	const exampleScores = [
+		{ name: "Player 1", score: 150 },
+		{ name: "Player 2", score: 120 },
+		{ name: "Player 3", score: 100 }
+	];
+	
+	// For now, show placeholder message
+	highScoresList.innerHTML = `
+		<p style="text-align: center; font-style: italic; color: #666;">
+			High scores will be displayed here once submissions are verified.
+		</p>
+	`;
+	
+	// TODO: Fetch from S3 bucket JSON file
+	// fetch('https://your-s3-bucket.s3.amazonaws.com/high-scores.json')
+	//   .then(response => response.json())
+	//   .then(data => {
+	//     displayHighScores(data);
+	//   });
+}
+
+function displayHighScores(scores) {
+	const highScoresList = document.getElementById('high-scores-list');
+	
+	if (scores.length === 0) {
+		highScoresList.innerHTML = '<p style="text-align: center;">No high scores yet!</p>';
+		return;
+	}
+	
+	let html = '<ol style="list-style: decimal; padding-left: 20px;">';
+	scores.forEach((entry, index) => {
+		html += `<li style="margin: 10px 0; font-size: 1.1em;">
+			<strong>${entry.name || 'Anonymous'}</strong>: ${entry.score}
+		</li>`;
+	});
+	html += '</ol>';
+	
+	highScoresList.innerHTML = html;
+}
+
+if (closeHighScores) {
+	closeHighScores.onclick = function () {
+		modalHighScores.style.display = "none";
+		resumeGame();
 	}
 }
 
@@ -1194,7 +1248,6 @@ var ninjaArray = [];
 var ninjaNumber = 0;
 // create ninja generator
 function hireNinja() {
-	console.log("NINJA HIRED")
 	var newNinjaName = "ninja" + ninjaNumber;
 	var newNinja = new Ninja(newNinjaName);
 	ninjaArray.push(newNinja);
@@ -1264,9 +1317,6 @@ function update() {
 	robinHood.arrowFollow();
 	checkGameStatus(robinHood.health);
 	checkIfHighScore();
-
-
-	console.log('ninja', ninjaArray)
 
 	for (const key in arrows) {
 
@@ -1359,7 +1409,6 @@ function draw() {
 		context.drawImage(robinHood.image, robinHood.x, robinHood.y);
 	}
 
-	console.log('robinhood.arrowlocation', robinHood.arrowLocation)
 	// context.drawImage(robinHood.arrowImage, robinHood.arrowLocation.x, robinHood.arrowLocation.y);
 
 

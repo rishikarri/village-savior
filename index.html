@@ -35,6 +35,7 @@
 				<button id="open-shop-button"onclick="openShop(); checkPurchasingAbility();"> Shop</button>
 
 				<button id="view-instructions-button"onclick="viewInstructions();">Instructions</button>
+				<button id="view-high-scores-button"onclick="viewHighScores();">High Scores</button>
 				<!-- Make a form here -->
 				<!-- <form id="enter-name-form" onsubmit="recordName();">
 
@@ -178,6 +179,28 @@
 			  <script>
 				// ... (your existing JavaScript code) ...
 			  </script>
+		</div>
+
+		<!-- High Scores Modal -->
+		<div id="modal-high-scores">
+			<div class="modal-high-scores-content">
+				<span class="close-high-scores">&times;</span>
+				<h2 style="text-align: center; margin-bottom: 20px;">High Scores</h2>
+				
+				<div id="high-scores-list" style="min-height: 200px; margin-bottom: 20px;">
+					<!-- High scores will be loaded here -->
+				</div>
+				
+				<section class="instruction-block" style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: center;">
+					<!-- Update href with your X handle, e.g. https://x.com/YourHandle -->
+					<a id="dm-high-score-button" href="https://x.com" target="_blank" rel="noopener noreferrer">
+						DM me your high score on X and I'll add it here
+					</a>
+					<p style="font-size: 0.85em; color: #666; margin-top: 10px; font-style: italic;">
+						If I suspect a high score was faked by editing the HTML, I'll request a screen recording to verify.
+					</p>
+				</section>
+			</div>
 		</div>
 		
 
