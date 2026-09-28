@@ -1,0 +1,15 @@
+node_modules/
+frontend/dist/
+frontend/node_modules/
+backend/.venv/
+backend/__pycache__/
+backend/.package/
+backend/lambda.zip
+backend/data/high_scores.json
+iac/.terraform/
+iac/*.tfstate
+iac/*.tfstate.*
+.DS_Store
+.env
+.env.local
+xyz.js

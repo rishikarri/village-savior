@@ -7,7 +7,13 @@ var context = canvas.getContext("2d");
 canvas.width = 675;
 canvas.height = 480;
 
-document.getElementById("middle-section").appendChild(canvas);
+function mountCanvas() {
+	var mount = document.getElementById("middle-section");
+	if (mount && !mount.contains(canvas)) {
+		mount.appendChild(canvas);
+	}
+}
+mountCanvas();
 var backgroundImage = new Image();
 backgroundImage.src = "Images/background2.jpeg";
 
@@ -82,7 +88,7 @@ function checkIfHighScore() {
 		localStorage.setItem("highScore", highScore);
 		
 		// Show message about screenshot
-		document.getElementById("textDisplay").innerHTML = "NEW HIGH SCORE! Screenshot the score display and email it!";
+		document.getElementById("textDisplay").innerHTML = "NEW HIGH SCORE! Screenshot the score display and DM me it on X!";
 		document.getElementById("textDisplay").style.color = "gold";
 		setTimeout(clearDisplay, 5000);
 	} else {
@@ -131,16 +137,16 @@ function userPause() {
 }
 
 let gamePaused = false; // Flag to track pause state
-const pauseResumeButton = document.getElementById('pause-resume-button');
 function togglePause() {
-    gamePaused = !gamePaused; // Toggle the pause state
+    gamePaused = !gamePaused;
 
+    var pauseResumeButton = document.getElementById('pause-resume-button');
     if (gamePaused) {
-      pauseResumeButton.textContent = "Resume";
-      pauseGame(); // Call your pause game function
+      if (pauseResumeButton) pauseResumeButton.textContent = "Resume";
+      pauseGame();
     } else {
-      pauseResumeButton.textContent = "Pause";
-      resumeGame(); // Call your resume game function
+      if (pauseResumeButton) pauseResumeButton.textContent = "Pause";
+      resumeGame();
     }
   }
 function pauseGame() {
@@ -174,8 +180,7 @@ addEventListener("keydown", function (event) {
 	// Handle S key to open shop
 	if (event.keyCode === 83) { // S key
 		if (!gamePaused && gameOn) {
-			openShop();
-			checkPurchasingAbility();
+			window.VillageSavior.openShop();
 		}
 		return;
 	}
@@ -1072,128 +1077,37 @@ var robinHood = new Hero("Robin Hood", "possible-enemies-allies/archer3.png", 1)
 // ----------------Instructions Section here-----------------
 // ----------------------------------------------------------
 
-var modalInstructions = document.getElementById('modal-instructions');
-var closeInstructions = document.getElementsByClassName("close-instructions")[0];
+function getGameSnapshot() {
+	return {
+		score: score,
+		high_score: Number(highScore) || 0,
+		gold: typeof robinHood !== "undefined" ? robinHood.gold : 0,
+		health: typeof robinHood !== "undefined" ? robinHood.health : 0,
+		fire_arrows: useFireArrows,
+		speed: typeof robinHood !== "undefined" ? robinHood.speed : 1,
+		ninjas: (typeof ninjaArray !== "undefined" && ninjaArray) ? ninjaArray.length : 0,
+		game_on: gameOn,
+		paused: gamePaused,
+	};
+}
+
+function openShop() {
+	pauseGame();
+	gamePaused = true;
+	var pauseResumeButton = document.getElementById("pause-resume-button");
+	if (pauseResumeButton) pauseResumeButton.textContent = "Resume";
+	checkPurchasingAbility();
+	window.dispatchEvent(new CustomEvent("villagesavior:open-shop"));
+}
 
 function viewInstructions() {
-	modalInstructions.style.display = "block";
 	pauseGame();
+	window.dispatchEvent(new CustomEvent("villagesavior:open-instructions"));
 }
-
-closeInstructions.onclick = function () {
-	resumeGame()
-	modalInstructions.style.display = "none";
-}
-
-const startGameButton = document.getElementById('start-game-button');
-
-  startGameButton.addEventListener('click', function() {
-    resumeGame()
-	modalInstructions.style.display = "none";
-  });
-
-// Handle clicking outside modals to close them
-window.onclick = function (event) {
-	if (event.target == modalInstructions) {
-		modalInstructions.style.display = "none";
-	}
-	if (event.target == modalShop) {
-		modalShop.style.display = "none";
-	}
-	if (event.target == modalHighScores) {
-		modalHighScores.style.display = "none";
-		resumeGame();
-	}
-}
-
-// ----------------------------------------------------------
-// ----------------Shop Section here-------------------------
-// ----------------------------------------------------------
-
-// get modal
-var modalShop = document.getElementById('modal-shop');
-
-// Get the <span> element that closes the modal
-var leaveShop = document.getElementsByClassName("close-shop")[0];
-
-// When the user clicks on the button, open the modal 
-function openShop() {
-	// when the user opens the shop, change the display to block
-	modalShop.style.display = "block";
-	// pause the game
-	pauseGame();
-}
-
-// When the user clicks on <span> (x), close the modal
-leaveShop.onclick = function () {
-	modalShop.style.display = "none";
-	resumeGame()
-}
-
-// ----------------------------------------------------------
-// ----------------High Scores Section here------------------
-// ----------------------------------------------------------
-
-var modalHighScores = document.getElementById('modal-high-scores');
-var closeHighScores = document.getElementsByClassName("close-high-scores")[0];
 
 function viewHighScores() {
-	modalHighScores.style.display = "block";
 	pauseGame();
-	loadHighScores();
-}
-
-function loadHighScores() {
-	// For now, we'll use a placeholder. Later you can load from S3
-	// This will be updated when you manually update the S3 bucket
-	const highScoresList = document.getElementById('high-scores-list');
-	
-	// Example high scores (you'll replace this with data from S3)
-	const exampleScores = [
-		{ name: "Player 1", score: 150 },
-		{ name: "Player 2", score: 120 },
-		{ name: "Player 3", score: 100 }
-	];
-	
-	// For now, show placeholder message
-	highScoresList.innerHTML = `
-		<p style="text-align: center; font-style: italic; color: #666;">
-			High scores will be displayed here once submissions are verified.
-		</p>
-	`;
-	
-	// TODO: Fetch from S3 bucket JSON file
-	// fetch('https://your-s3-bucket.s3.amazonaws.com/high-scores.json')
-	//   .then(response => response.json())
-	//   .then(data => {
-	//     displayHighScores(data);
-	//   });
-}
-
-function displayHighScores(scores) {
-	const highScoresList = document.getElementById('high-scores-list');
-	
-	if (scores.length === 0) {
-		highScoresList.innerHTML = '<p style="text-align: center;">No high scores yet!</p>';
-		return;
-	}
-	
-	let html = '<ol style="list-style: decimal; padding-left: 20px;">';
-	scores.forEach((entry, index) => {
-		html += `<li style="margin: 10px 0; font-size: 1.1em;">
-			<strong>${entry.name || 'Anonymous'}</strong>: ${entry.score}
-		</li>`;
-	});
-	html += '</ol>';
-	
-	highScoresList.innerHTML = html;
-}
-
-if (closeHighScores) {
-	closeHighScores.onclick = function () {
-		modalHighScores.style.display = "none";
-		resumeGame();
-	}
+	window.dispatchEvent(new CustomEvent("villagesavior:open-high-scores"));
 }
 
 
@@ -1203,12 +1117,12 @@ if (closeHighScores) {
 // create functions that enable and disable purchasing buttons depending on robinhood's gold
 function disableButton(buttonString) {
 	var button = document.getElementById(buttonString);
-	button.disabled = true;
+	if (button) button.disabled = true;
 }
 
 function enableButton(buttonString) {
 	var button = document.getElementById(buttonString);
-	button.disabled = false;
+	if (button) button.disabled = false;
 }
 
 // check to see what robinHood can purchase
@@ -1371,14 +1285,20 @@ function update() {
 
 
 //end game if player has 0 or less health
+var gameOverDispatched = false;
 function checkGameStatus(health) {
 	if (health <= 0) {
-		//you lost
 		gameOn = false;
 		document.getElementById("textDisplay").innerHTML = "GAME OVER";
 		monsterIntervalManager(true);
 		disableButton("pause-resume-button");
 		disableButton("open-shop-button");
+		if (!gameOverDispatched) {
+			gameOverDispatched = true;
+			window.dispatchEvent(new CustomEvent("villagesavior:game-over", {
+				detail: getGameSnapshot()
+			}));
+		}
 	}
 }
 // need to draw the image constantly
@@ -1466,8 +1386,30 @@ function draw() {
 
 }
 //
-viewInstructions()
+pauseGame();
 draw();
+
+window.VillageSavior = {
+	remount: mountCanvas,
+	startNewGame: startGame,
+	togglePause: togglePause,
+	pauseGame: pauseGame,
+	resumeGame: function () {
+		gamePaused = false;
+		var pauseResumeButton = document.getElementById("pause-resume-button");
+		if (pauseResumeButton) pauseResumeButton.textContent = "Pause";
+		resumeGame();
+	},
+	openShop: openShop,
+	viewInstructions: viewInstructions,
+	viewHighScores: viewHighScores,
+	drinkHealthPotion: drinkHealthPotion,
+	hireNinja: hireNinja,
+	drinkSpeedPotion: drinkSpeedPotion,
+	giveHeroFireArrows: giveHeroFireArrows,
+	checkPurchasingAbility: checkPurchasingAbility,
+	getSnapshot: getGameSnapshot,
+};
 
 
 
