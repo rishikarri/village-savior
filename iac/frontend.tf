@@ -1,9 +1,11 @@
 resource "aws_s3_bucket" "frontend" {
+  count  = var.create_frontend ? 1 : 0
   bucket = "${var.project_name}-${var.environment}-frontend-${data.aws_caller_identity.current.account_id}"
 }
 
 resource "aws_s3_bucket_public_access_block" "frontend" {
-  bucket                  = aws_s3_bucket.frontend.id
+  count                   = var.create_frontend ? 1 : 0
+  bucket                  = aws_s3_bucket.frontend[0].id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
@@ -11,6 +13,7 @@ resource "aws_s3_bucket_public_access_block" "frontend" {
 }
 
 resource "aws_cloudfront_origin_access_control" "frontend" {
+  count                             = var.create_frontend ? 1 : 0
   name                              = "${var.project_name}-${var.environment}-frontend-oac"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
@@ -18,34 +21,38 @@ resource "aws_cloudfront_origin_access_control" "frontend" {
 }
 
 data "aws_iam_policy_document" "frontend_bucket" {
+  count = var.create_frontend ? 1 : 0
+
   statement {
     principals {
       type        = "Service"
       identifiers = ["cloudfront.amazonaws.com"]
     }
     actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.frontend.arn}/*"]
+    resources = ["${aws_s3_bucket.frontend[0].arn}/*"]
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
-      values   = [aws_cloudfront_distribution.frontend.arn]
+      values   = [aws_cloudfront_distribution.frontend[0].arn]
     }
   }
 }
 
 resource "aws_s3_bucket_policy" "frontend" {
-  bucket = aws_s3_bucket.frontend.id
-  policy = data.aws_iam_policy_document.frontend_bucket.json
+  count  = var.create_frontend ? 1 : 0
+  bucket = aws_s3_bucket.frontend[0].id
+  policy = data.aws_iam_policy_document.frontend_bucket[0].json
 }
 
 resource "aws_cloudfront_distribution" "frontend" {
+  count               = var.create_frontend ? 1 : 0
   enabled             = true
   default_root_object = "index.html"
 
   origin {
-    domain_name              = aws_s3_bucket.frontend.bucket_regional_domain_name
+    domain_name              = aws_s3_bucket.frontend[0].bucket_regional_domain_name
     origin_id                = "frontend-s3"
-    origin_access_control_id = aws_cloudfront_origin_access_control.frontend.id
+    origin_access_control_id = aws_cloudfront_origin_access_control.frontend[0].id
   }
 
   default_cache_behavior {

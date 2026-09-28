@@ -60,7 +60,7 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = {
       HIGH_SCORES_TABLE = aws_dynamodb_table.high_scores.name
-      CORS_ORIGINS      = join(",", concat(var.cors_origins, ["https://${aws_cloudfront_distribution.frontend.domain_name}"]))
+      CORS_ORIGINS      = join(",", var.cors_origins)
     }
   }
 

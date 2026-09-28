@@ -87,8 +87,7 @@ function checkIfHighScore() {
 		document.getElementById("highScoreKeeper").innerHTML = formatHighScoreWithWatermark(highScore, true);
 		localStorage.setItem("highScore", highScore);
 		
-		// Show message about screenshot
-		document.getElementById("textDisplay").innerHTML = "NEW HIGH SCORE! Screenshot the score display and DM me it on X!";
+		document.getElementById("textDisplay").innerHTML = "NEW HIGH SCORE!";
 		document.getElementById("textDisplay").style.color = "gold";
 		setTimeout(clearDisplay, 5000);
 	} else {
