@@ -5,7 +5,7 @@ applications:
       phases:
         build:
           commands:
-            - echo "Static HTML — no build"
+            - echo "static html"
       artifacts:
         baseDirectory: .
         files:

@@ -26,6 +26,8 @@ variable "cors_origins" {
     "http://127.0.0.1:8080",
     "https://village-savior-game.com",
     "https://www.village-savior-game.com",
+    "https://villagesaviorsgame.com",
+    "https://www.villagesaviorsgame.com",
   ]
 }
 
@@ -55,8 +57,8 @@ variable "api_burst_limit" {
 
 variable "lambda_reserved_concurrency" {
   type        = number
-  description = "Max concurrent Lambda executions. This is the hard spend cap."
-  default     = 5
+  description = "Optional reserved concurrency. Leave null on small accounts (AWS requires 10 unreserved executions left)."
+  default     = null
 }
 
 variable "monthly_budget_usd" {

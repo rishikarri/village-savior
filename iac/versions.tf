@@ -12,12 +12,11 @@ terraform {
     }
   }
 
-  # Uncomment after creating a remote state bucket:
-  # backend "s3" {
-  #   bucket = "village-savior-tfstate"
-  #   key    = "iac/terraform.tfstate"
-  #   region = "us-east-1"
-  # }
+  backend "s3" {
+    bucket = "village-savior-tfstate-443370697679"
+    key    = "iac/terraform.tfstate"
+    region = "us-east-1"
+  }
 }
 
 provider "aws" {
