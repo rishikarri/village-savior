@@ -39,6 +39,28 @@ function generateUniqueId() {
 }
 
 
+var lastFrameTime = performance.now();
+var frameScale = 1;
+var TARGET_FPS = 60;
+
+function beginFrame(now) {
+	var elapsed = now - lastFrameTime;
+	lastFrameTime = now;
+	if (elapsed < 0) elapsed = 0;
+	if (elapsed > 50) elapsed = 50;
+	frameScale = elapsed / (1000 / TARGET_FPS);
+}
+
+function step(pixelsPerFrame) {
+	return pixelsPerFrame * frameScale;
+}
+
+function setImageSrc(image, src) {
+	if (!image || image._villageSrc === src) return;
+	image._villageSrc = src;
+	image.src = src;
+}
+
 function deleteObjectByKey(obj, keyToDelete) {
 	if (obj.hasOwnProperty(keyToDelete)) {
 		delete obj[keyToDelete];
@@ -159,7 +181,7 @@ function resumeGame() {
 	monsterIntervalManager(false);
 	// var goblinInterval = setInterval(generateGoblinNumber, 5000);
 	// var golemInterval = setInterval(generateGolemNumber, 35000);
-	// var thugInterval = setInterval(generateThugNumber, 7000);
+	// var banditInterval = setInterval(generateBandit, 7000);
 }
 
 
@@ -247,14 +269,12 @@ function Hero(name, image, speed) {
 
 		if (37 in keysPressed) {
 			if (this.x >= movementBounds.x1) {
-				this.x -= 7 * this.speed;
-				// Make archer look left if he is moving left - do the same with arrow
-				this.image.src = "possible-enemies-allies/archer3-left.png";
-				//if the user upgraded arrows, show fire arrows, otherwise show regular arrows
+				this.x -= step(7 * this.speed);
+				setImageSrc(this.image, "possible-enemies-allies/archer3-left.png");
 				if (arrowDamage == 2) {
-					this.arrowImage.src = "Images/flaming-arrow2 left.png"
+					setImageSrc(this.arrowImage, "Images/flaming-arrow2 left.png");
 				} else {
-					this.arrowImage.src = "Images/arrow-left.png";
+					setImageSrc(this.arrowImage, "Images/arrow-left.png");
 				}
 
 				this.arrowLocation.x = this.x - 4;
@@ -265,17 +285,17 @@ function Hero(name, image, speed) {
 		}
 		if (38 in keysPressed) {
 			if (this.y >= movementBounds.y1) {
-				this.y -= 7 * this.speed;
+				this.y -= step(7 * this.speed);
 			}
 		}
 		if (39 in keysPressed) {
 			if (this.x <= movementBounds.x2) {
-				this.x += 7 * this.speed;
-				this.image.src = "possible-enemies-allies/archer3.png";
+				this.x += step(7 * this.speed);
+				setImageSrc(this.image, "possible-enemies-allies/archer3.png");
 				if (arrowDamage === 2) {
-					this.arrowImage.src = "Images/flaming-arrow2.png";
+					setImageSrc(this.arrowImage, "Images/flaming-arrow2.png");
 				} else {
-					this.arrowImage.src = "Images/arrow-right.png";
+					setImageSrc(this.arrowImage, "Images/arrow-right.png");
 				}
 
 				// this.arrowLocation.x = this.x + 22;
@@ -286,7 +306,7 @@ function Hero(name, image, speed) {
 		}
 		if (40 in keysPressed) {
 			if (this.y <= movementBounds.y2) {
-				this.y += 7 * this.speed;
+				this.y += step(7 * this.speed);
 			}
 		}
 	}
@@ -375,20 +395,20 @@ function Hero(name, image, speed) {
 
 		// Update sprite direction when holding keys (for visual feedback)
 		if (keysPressed && aKey in keysPressed) {
-			this.image.src = "possible-enemies-allies/archer3-left.png";
+			setImageSrc(this.image, "possible-enemies-allies/archer3-left.png");
 			this.faceLeft = true;
 			if (arrowDamage == 2) {
-				this.arrowImage.src = "Images/flaming-arrow2 left.png"
+				setImageSrc(this.arrowImage, "Images/flaming-arrow2 left.png");
 			} else {
-				this.arrowImage.src = "Images/arrow-left.png";
+				setImageSrc(this.arrowImage, "Images/arrow-left.png");
 			}
 		} else if (keysPressed && dKey in keysPressed) {
-			this.image.src = "possible-enemies-allies/archer3.png";
+			setImageSrc(this.image, "possible-enemies-allies/archer3.png");
 			this.faceLeft = false;
 			if (arrowDamage === 2) {
-				this.arrowImage.src = "Images/flaming-arrow2.png";
+				setImageSrc(this.arrowImage, "Images/flaming-arrow2.png");
 			} else {
-				this.arrowImage.src = "Images/arrow-right.png";
+				setImageSrc(this.arrowImage, "Images/arrow-right.png");
 			}
 		}
 	}
@@ -449,11 +469,11 @@ class Arrow {
 		}
 
 		if (this.arrowLocation.x < this.arrowLocation.destinationX && this.arrowDirection === 'RIGHT') {
-			this.arrowLocation.x += 6;
+			this.arrowLocation.x += step(6);
 		}
 
 		if (this.arrowLocation.x > this.arrowLocation.destinationX && this.arrowDirection === 'LEFT') {
-			this.arrowLocation.x -= 6;
+			this.arrowLocation.x -= step(6);
 		}
 	}
 }
@@ -554,10 +574,10 @@ class Enemy {
 		if (Math.abs(this.x - robinHood.x) < thresholdX) {
 			this.catchRobinHood();
 		} else if (this.x < robinHood.x) {
-			this.x += moveSpeed * this.speed;
+			this.x += step(moveSpeed * this.speed);
 			this.updateSpriteDirection('right');
 		} else {
-			this.x -= moveSpeed * this.speed;
+			this.x -= step(moveSpeed * this.speed);
 			this.updateSpriteDirection('left');
 		}
 
@@ -565,9 +585,9 @@ class Enemy {
 		if (Math.abs(this.y - robinHood.y) < thresholdY) {
 			this.catchRobinHood();
 		} else if (this.y > robinHood.y) {
-			this.y -= moveSpeed * this.speed;
+			this.y -= step(moveSpeed * this.speed);
 		} else {
-			this.y += moveSpeed * this.speed;
+			this.y += step(moveSpeed * this.speed);
 		}
 	}
 
@@ -685,19 +705,19 @@ class Goblin extends Enemy {
 		if (Math.abs(this.x - this.destinationX) < 32) {
 			this.destinationX = Math.random() * 440 + 40;
 		} else if (this.x < this.destinationX) {
-			this.x += 2.94 * this.speed;
-			this.image.src = "possible-enemies-allies/royalty-goblin-right.png";
+			this.x += step(2.94 * this.speed);
+			setImageSrc(this.image, "possible-enemies-allies/royalty-goblin-right.png");
 		} else {
-			this.x -= 2.94 * this.speed;
-			this.image.src = "possible-enemies-allies/royalty goblin-left.png";
+			this.x -= step(2.94 * this.speed);
+			setImageSrc(this.image, "possible-enemies-allies/royalty goblin-left.png");
 		}
 
 		if (Math.abs(this.y - this.destinationY) < 32) {
 			this.destinationY = Math.random() * 400 + 20;
 		} else if (this.y > this.destinationY) {
-			this.y -= 2.94 * this.speed;
+			this.y -= step(2.94 * this.speed);
 		} else {
-			this.y += 2.94 * this.speed;
+			this.y += step(2.94 * this.speed);
 		}
 	}
 
@@ -716,15 +736,15 @@ class Goblin extends Enemy {
 
 class Bandit extends Enemy {
 	constructor(name) {
-		super(name, 12, "possible-enemies-allies/thug.png", 1, 7);
+		super(name, 12, "possible-enemies-allies/bandit.png", 1, 7);
 	}
 
 	// Override sprite direction update for bandit
 	updateSpriteDirection(direction) {
 		if (direction === 'right') {
-			this.image.src = "possible-enemies-allies/thug.png";
+			setImageSrc(this.image, "possible-enemies-allies/bandit.png");
 		} else {
-			this.image.src = "possible-enemies-allies/thug-left.png";
+			setImageSrc(this.image, "possible-enemies-allies/bandit-left.png");
 		}
 	}
 
@@ -762,9 +782,9 @@ class Golem extends Enemy {
 	// Override sprite direction update for golem
 	updateSpriteDirection(direction) {
 		if (direction === 'right') {
-			this.image.src = "possible-enemies-allies/golem1.png";
+			setImageSrc(this.image, "possible-enemies-allies/golem1.png");
 		} else {
-			this.image.src = "possible-enemies-allies/golem-face-left.png";
+			setImageSrc(this.image, "possible-enemies-allies/golem-face-left.png");
 		}
 	}
 
@@ -877,12 +897,12 @@ function Ninja(name) {
 		if (Math.abs(this.x - this.destinationX) < 32) {
 			this.destinationX = Math.random() * 440 + 40;
 		} else if (this.x < this.destinationX && !this.throwing) {
-			this.x += 2.00 * this.speed;
-			this.image.src = "possible-enemies-allies/ninja2.png";
+			this.x += step(2.00 * this.speed);
+			setImageSrc(this.image, "possible-enemies-allies/ninja2.png");
 			this.faceLeft = false;
 		} else if (this.x > this.destinationX && !this.throwing) {
-			this.x -= 2.00 * this.speed;
-			this.image.src = "possible-enemies-allies/ninja2-left.png";
+			this.x -= step(2.00 * this.speed);
+			setImageSrc(this.image, "possible-enemies-allies/ninja2-left.png");
 			this.faceLeft = true;
 		}
 
@@ -891,9 +911,9 @@ function Ninja(name) {
 			//throw the star if he reaches the y destination
 			this.ninjaStarThrow();
 		} else if (this.y > this.destinationY && !this.throwing) {
-			this.y -= 2.00 * this.speed;
+			this.y -= step(2.00 * this.speed);
 		} else if (this.y < this.destinationY && !this.throwing) {
-			this.y += 2.00 * this.speed;
+			this.y += step(2.00 * this.speed);
 
 		}
 	}
@@ -945,10 +965,10 @@ function Ninja(name) {
 			// 	//if the ninjaStar is not within 10 pixels of its destination, keep it going
 			if (this.ninjaStarLocation.x < this.ninjaStarLocation.destinationX && this.throwing == true) {
 
-				this.ninjaStarLocation.x += 3;
+				this.ninjaStarLocation.x += step(3);
 
 			} else if (this.ninjaStarLocation.x > this.ninjaStarLocation.destinationX && this.throwing == true) {
-				this.ninjaStarLocation.x -= 3;
+				this.ninjaStarLocation.x -= step(3);
 			}
 		}
 
@@ -1302,10 +1322,11 @@ function checkGameStatus(health) {
 }
 // need to draw the image constantly
 
-function draw() {
+function draw(now) {
 
 	// recursively call draw 
 	requestAnimationFrame(draw);
+	beginFrame(now || performance.now());
 
 	if (gameOn) {
 		update();
