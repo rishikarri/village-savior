@@ -41,7 +41,7 @@ function generateUniqueId() {
 
 var lastFrameTime = performance.now();
 var frameScale = 1;
-var TARGET_FPS = 60;
+var TARGET_FPS = 72;
 
 function beginFrame(now) {
 	var elapsed = now - lastFrameTime;

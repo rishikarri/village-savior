@@ -182,7 +182,7 @@ canvas{
 
 
 #gold-collected{
-	background-image: url("/Images/gold-holder.png");
+	background-image: url("Images/gold-holder.png");
 	height: 70px;
 	width: 100px;
 	/* background-size: 100px 68px; */
@@ -198,7 +198,7 @@ canvas{
 #health{
 	color: white;
 	font-weight: 700;
-	background-image: url("/Images/heart38.png");
+	background-image: url("Images/heart38.png");
 	height: 68px;
 	width: 71px;	
 	line-height: 68px;

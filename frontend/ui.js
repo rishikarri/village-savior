@@ -65,12 +65,12 @@
 
   function resetSubmitModal() {
     document.getElementById("submit-name-form").classList.remove("hidden-modal");
-    hide(document.getElementById("submit-confirm"));
     hide(document.getElementById("submit-success"));
     hide(document.getElementById("submit-error"));
     document.getElementById("submit-username").value = "";
-    document.getElementById("send-for-review-button").disabled = false;
-    document.getElementById("send-for-review-button").textContent = "Send for review";
+    var button = document.getElementById("send-for-review-button");
+    button.disabled = false;
+    button.textContent = "Send for review";
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -158,26 +158,8 @@
       event.stopPropagation();
     });
 
-    document.getElementById("submit-name-form").addEventListener("submit", function (event) {
+    document.getElementById("submit-name-form").addEventListener("submit", async function (event) {
       event.preventDefault();
-      var state = snapshot();
-      var name = document.getElementById("submit-username").value.trim();
-      document.getElementById("preview-name").textContent = name;
-      document.getElementById("preview-score").textContent = state.score || 0;
-      document.getElementById("preview-gold").textContent = state.gold || 0;
-      document.getElementById("preview-health").textContent = state.health || 0;
-      document.getElementById("preview-ninjas").textContent = state.ninjas || 0;
-      document.getElementById("preview-fire").textContent = state.fire_arrows ? "yes" : "no";
-      hide(document.getElementById("submit-name-form"));
-      show(document.getElementById("submit-confirm"));
-    });
-
-    document.getElementById("edit-name-button").addEventListener("click", function () {
-      hide(document.getElementById("submit-confirm"));
-      show(document.getElementById("submit-name-form"));
-    });
-
-    document.getElementById("send-for-review-button").addEventListener("click", async function () {
       var button = document.getElementById("send-for-review-button");
       var errorEl = document.getElementById("submit-error");
       button.disabled = true;
@@ -189,7 +171,7 @@
           highScore: snapshot().score,
           gameState: snapshot()
         });
-        hide(document.getElementById("submit-confirm"));
+        hide(document.getElementById("submit-name-form"));
         show(document.getElementById("submit-success"));
       } catch (err) {
         errorEl.textContent = err.message || "Could not save high score.";

@@ -123,24 +123,8 @@
 
         <form id="submit-name-form" class="submit-score-form">
           <input id="submit-username" type="text" maxlength="32" placeholder="Your name" required />
-          <button type="submit">Review</button>
+          <button type="submit" id="send-for-review-button">Send for review</button>
         </form>
-
-        <div id="submit-confirm" class="hidden-modal">
-          <p class="status-text">Check this before sending:</p>
-          <ul class="high-scores-list">
-            <li><strong>Name:</strong> <span id="preview-name"></span></li>
-            <li><strong>Score:</strong> <span id="preview-score"></span></li>
-            <li><strong>Gold:</strong> <span id="preview-gold"></span></li>
-            <li><strong>Health:</strong> <span id="preview-health"></span></li>
-            <li><strong>Ninjas:</strong> <span id="preview-ninjas"></span></li>
-            <li><strong>Fire arrows:</strong> <span id="preview-fire"></span></li>
-          </ul>
-          <div class="submit-score-form">
-            <button type="button" id="edit-name-button">Edit name</button>
-            <button type="button" id="send-for-review-button">Send for review</button>
-          </div>
-        </div>
 
         <p id="submit-success" class="status-text hidden-modal">
           Sent for review. It will show on the leaderboard after it is approved.
