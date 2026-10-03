@@ -1,12 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Village Savior</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Village Savior</title>
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+  <div id="game-wrapper">
+    <div id="top-section">
+      <div id="game-stats">
+        <h2 id="scoreKeeper">Score: 0</h2>
+        <h2 id="highScoreKeeper">High Score: 0</h2>
+        <p id="gold-collected">100</p>
+        <p id="health">6</p>
+      </div>
+
+      <div id="game-play-buttons">
+        <button id="start-button">New Game</button>
+        <button id="pause-resume-button">Pause</button>
+        <button id="open-shop-button">Shop</button>
+        <button id="view-instructions-button">Instructions</button>
+        <button id="view-high-scores-button">High Scores</button>
+      </div>
+
+      <div id="text-section">
+        <h2 id="textDisplay">&nbsp;</h2>
+      </div>
+    </div>
+
+    <div id="middle-section">
+      <div id="hurtByEnemy"></div>
+    </div>
+
+    <div id="modal-instructions" class="modal-overlay">
+      <div class="modal-instructions-content">
+        <span class="close-instructions" role="button" aria-label="Close instructions">&times;</span>
+        <section class="instruction-block">
+          <p>Monsters and thieves are closing in.</p>
+          <p>Buy the villagers time.</p>
+          <p>Fight until you can't.</p>
+          <p>Then, and only then, retreat.</p>
+        </section>
+        <section class="instruction-block">
+          <h2>Movement</h2>
+          <div class="visual-instruction">
+            <img id="arrow-keys-image" src="Images/arrow-keys2.jpg" alt="Arrow Keys" />
+            <p class="instructions-movement-text">Use the arrow keys to move.</p>
+          </div>
+        </section>
+        <section class="instruction-block">
+          <h2>How to Fight</h2>
+          <div class="visual-instruction">
+            <div class="key-visual">A</div>
+            <p>Launch arrow left.</p>
+          </div>
+          <div class="visual-instruction">
+            <div class="key-visual">D</div>
+            <p>Launch arrow right.</p>
+          </div>
+        </section>
+        <section class="instruction-block">
+          <h2>Shop</h2>
+          <div class="visual-instruction">
+            <div class="key-visual">S</div>
+            <p>Open shop.</p>
+          </div>
+        </section>
+        <p>Good luck</p>
+        <button id="start-game-button">Start Game</button>
+      </div>
+    </div>
+
+    <div id="modal-shop" class="modal-overlay hidden-modal">
+      <div class="modal-shop-content">
+        <span class="close-shop" role="button" aria-label="Close shop">&times;</span>
+        <p>Welcome to the Shop! Here we have help and supplies that should aid in your quest to protect the land!</p>
+        <div id="shop-buttons">
+          <div id="health-potion-div">
+            <button id="health-potion-button">Drink Health Potion</button>
+            <img src="Images/health-potion.png" alt="Health potion" />
+            <p class="gold-text">50 gold</p>
+            <p>Heals 3 HP!</p>
+          </div>
+          <div id="fire-arrows-div">
+            <button id="fire-arrows-button">Upgrade to Flame Arrows</button>
+            <img src="Images/fire-arrowUpgrade.png" alt="Flame arrows" />
+            <p class="gold-text">300 gold</p>
+            <p>Ignites arrow tips on fire which deal more damage!</p>
+          </div>
+          <div>
+            <button id="speed-potion-button">Buy Speed Potion</button>
+            <img src="Images/speed-potion.png" alt="Speed potion" />
+            <p class="gold-text">500 gold</p>
+            <p>Boost your speed!</p>
+          </div>
+          <div>
+            <button id="ninja-button">Hire a Ninja</button>
+            <img src="possible-enemies-allies/ninja2 store version.png" alt="Ninja" />
+            <p class="gold-text">80 gold</p>
+            <p>Hire a Ninja who will loyally fight by your side until the end!</p>
+          </div>
+        </div>
+        <p class="shop-notice" id="shop-gold-notice">Gold on hand: 100</p>
+      </div>
+    </div>
+
+    <div id="modal-high-scores" class="modal-overlay hidden-modal">
+      <div class="modal-high-scores-content">
+        <span class="close-high-scores" role="button" aria-label="Close high scores">&times;</span>
+        <h2 style="text-align: center; margin-bottom: 20px;">High Scores</h2>
+        <div id="high-scores-list" class="high-scores-list"></div>
+        <p class="status-text" style="font-size: 0.9em;">New scores appear here after they are reviewed.</p>
+      </div>
+    </div>
+
+    <div id="modal-submit-score" class="modal-overlay hidden-modal">
+      <div class="modal-high-scores-content">
+        <span class="close-submit-score" role="button" aria-label="Close submit score">&times;</span>
+        <h2 style="text-align: center;">Submit High Score</h2>
+        <p class="status-text">Game over. Your score was <strong id="submit-score-value">0</strong>.</p>
+
+        <form id="submit-name-form" class="submit-score-form">
+          <input id="submit-username" type="text" maxlength="32" placeholder="Your name" required />
+          <button type="submit">Review</button>
+        </form>
+
+        <div id="submit-confirm" class="hidden-modal">
+          <p class="status-text">Check this before sending:</p>
+          <ul class="high-scores-list">
+            <li><strong>Name:</strong> <span id="preview-name"></span></li>
+            <li><strong>Score:</strong> <span id="preview-score"></span></li>
+            <li><strong>Gold:</strong> <span id="preview-gold"></span></li>
+            <li><strong>Health:</strong> <span id="preview-health"></span></li>
+            <li><strong>Ninjas:</strong> <span id="preview-ninjas"></span></li>
+            <li><strong>Fire arrows:</strong> <span id="preview-fire"></span></li>
+          </ul>
+          <div class="submit-score-form">
+            <button type="button" id="edit-name-button">Edit name</button>
+            <button type="button" id="send-for-review-button">Send for review</button>
+          </div>
+        </div>
+
+        <p id="submit-success" class="status-text hidden-modal">
+          Sent for review. It will show on the leaderboard after it is approved.
+        </p>
+        <p id="submit-error" class="error-text hidden-modal"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="api.js"></script>
+  <script src="ui.js"></script>
+  <script src="game/survivor-canvas-game.js"></script>
+  <script src="game/xyz.js"></script>
+</body>
 </html>

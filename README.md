@@ -1,11 +1,11 @@
 # Village Savior
 
-Canvas survivor game with a React shell, Python API, and AWS Terraform.
+Canvas survivor game with a static HTML frontend, a Python high-score API, and AWS Terraform.
 
 ```
 backend/    FastAPI high-score API
-frontend/   React (Vite) HUD, shop, instructions, leaderboard + original canvas game
-iac/        Terraform for S3, CloudFront, Lambda, API Gateway, DynamoDB
+frontend/   index.html, CSS, JS + original canvas game
+iac/        Terraform for Lambda, API Gateway, DynamoDB
 ```
 
 ## Local development
@@ -24,33 +24,22 @@ Terminal 2 — UI:
 
 ```bash
 cd frontend
-npm install
-npm run dev
+python3 -m http.server 8080
 ```
 
-Open http://localhost:5173. Vite proxies `/api` to the API on port 8000.
+Open http://localhost:8080.
 
 ## API
 
 - `GET /api/v1/health`
-- `GET /api/v1/high-scores`
-- `POST /api/v1/high-scores`
-
-```json
-{
-  "username": "rishi",
-  "high_score": 42,
-  "game_state": { "gold": 80, "health": 0 }
-}
-```
+- `GET /api/v1/high-scores` (approved only)
+- `POST /api/v1/high-scores` (queues a pending score)
 
 ## Deploy
 
-See `iac/README.md` for the full path. Short version:
+1. `terraform apply` in `iac/` for the API.
+2. Put `api_url` into `frontend/config.js`.
+3. Connect this GitHub repo to Amplify, branch `main`, app root `frontend`.
+   Push to `main` publishes `village-savior-game.com` (after you attach the domain in Amplify).
 
-1. `terraform apply` in `iac/` to stand up the high-score API.
-2. Put that API URL in Amplify as `VITE_API_URL`, **or** bake it in and upload `frontend/dist` to your existing S3 bucket.
-3. Point `village-savior-game.com` at Amplify (new) or keep serving it from the current S3 pipeline.
-
-Local `npm run dev` still proxies `/api` so you can leave `VITE_API_URL` empty on your laptop.
-
+Details: `iac/README.md`.

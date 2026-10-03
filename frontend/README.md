@@ -1,12 +1,12 @@
 # Frontend
 
-React (Vite) shell around the original canvas game.
+Static HTML, CSS, and JS around the original canvas game.
 
 ```bash
-npm install
-npm run dev
+cd backend && uvicorn app.main:app --reload --port 8000
+cd frontend && python3 -m http.server 8080
 ```
 
-HUD, shop, instructions, and high scores are React. The canvas engine still lives in `public/game/survivor-canvas-game.js`.
+Open http://localhost:8080. Local API calls go to http://127.0.0.1:8000.
 
-Production builds need `VITE_API_URL` set to the Terraform `api_url` (Amplify env var, or prefix the `npm run build` command).
+Production API URL lives in `config.js` (`apiUrl`). Set it to the Terraform `api_url` before (or in) the first Amplify deploy.

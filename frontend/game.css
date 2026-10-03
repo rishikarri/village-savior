@@ -58,7 +58,7 @@ html{
 .modal-instructions {    
     max-height: 90vh;
     position: fixed;
-    z-index: 1;
+    z-index: 10;
     left: 0;
     top: 0;
     width: 100%;
@@ -223,7 +223,7 @@ canvas{
 /* Styling for the shop here */
 #modal-shop {
     position: fixed;
-    z-index: 1;
+    z-index: 10;
     left: 0;
     top: 0;
     width: 100%;
@@ -287,7 +287,7 @@ canvas{
 
 #modal-instructions {
     position: fixed;
-    z-index: 1;
+    z-index: 10;
     left: 0;
     top: 0;
     width: 100%;
@@ -325,7 +325,7 @@ canvas{
 /* High Scores Modal */
 #modal-high-scores {
     position: fixed;
-    z-index: 1;
+    z-index: 10;
     left: 0;
     top: 0;
     width: 100%;
@@ -374,4 +374,64 @@ canvas{
 
 #dm-high-score-button:hover {
     background-color: #0d8bd9;
+}#root {
+  min-height: 100vh;
+}
+
+.modal-overlay {
+  display: block;
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.hidden-modal {
+  display: none;
+}
+
+.submit-score-form {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.submit-score-form input {
+  padding: 8px;
+  min-width: 180px;
+}
+
+.high-scores-list {
+  min-height: 200px;
+  margin-bottom: 20px;
+}
+
+.high-scores-list ol {
+  list-style: decimal;
+  padding-left: 20px;
+}
+
+.high-scores-list li {
+  margin: 10px 0;
+  font-size: 1.1em;
+}
+
+.error-text {
+  color: #b00020;
+  text-align: center;
+}
+
+.status-text {
+  text-align: center;
+}
+
+.shop-notice {
+  text-align: center;
+  font-style: italic;
+  margin-top: 12px;
 }

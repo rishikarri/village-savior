@@ -32,35 +32,35 @@ CORS already allows `https://village-savior-game.com`.
 
 ## 2. Hook the frontend to that API
 
-The React app reads `VITE_API_URL` at **build** time.
+Put the `api_url` output in `frontend/config.js`:
 
-### Option A — Amplify Hosting (recommended)
+```js
+window.VILLAGE_SAVIOR_CONFIG = {
+  apiUrl: "https://xxxx.execute-api.us-east-1.amazonaws.com"
+};
+```
 
-This replaces “upload files to S3” with git-push deploys, and you can still use `village-savior-game.com`.
+Localhost ignores this and uses `http://127.0.0.1:8000`.
+
+### Amplify Hosting (push to `main`)
+
+This replaces “upload files to S3”. The site is static HTML, so there is no npm build.
 
 1. AWS Console → **Amplify** → **Create new app** → **Host web app** → connect this GitHub repo.
-2. App root / monorepo setting: `frontend` (the root `amplify.yml` already sets `appRoot: frontend`).
-3. Build settings should pick up `amplify.yml`.
-4. **Environment variables** (for the branch):
-   - `VITE_API_URL` = the Terraform `api_url` (no trailing slash)
-5. **Domain management** → add `village-savior-game.com` (and `www` if you use it).
-   Amplify will ask you to update Route 53 / DNS. After the domain is on Amplify, stop uploading the old static files to S3, or you will have two sources fighting.
+2. Branch: **`main`**. App root: `frontend` (root `amplify.yml` already sets this).
+3. Save. Amplify will deploy on every push to `main`.
+4. **Domain management** → add `village-savior-game.com` (and `www` if you use it).
+   After DNS is on Amplify, stop uploading the old files to S3 so the two pipelines don’t fight.
 
-Each push to the connected branch rebuilds with the API URL baked in.
-
-### Option B — keep uploading to your current S3 bucket
+### Keep uploading to your current S3 bucket
 
 ```bash
 cd frontend
-VITE_API_URL="https://YOUR_API_ID.execute-api.us-east-1.amazonaws.com" npm run build
-aws s3 sync dist/ s3://YOUR_EXISTING_BUCKET --delete
+aws s3 sync . s3://YOUR_EXISTING_BUCKET --delete \
+  --exclude ".gitignore" --exclude ".amplifyignore" --exclude "README.md"
 ```
 
-Use the same bucket that already feeds `village-savior-game.com`. If CloudFront sits in front, invalidate after upload:
-
-```bash
-aws cloudfront create-invalidation --distribution-id YOUR_ID --paths "/*"
-```
+If CloudFront sits in front, invalidate `/*` after the sync.
 
 ## Frontend Terraform (optional)
 

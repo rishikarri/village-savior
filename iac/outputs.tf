@@ -1,6 +1,6 @@
 output "api_url" {
   value       = aws_apigatewayv2_api.http.api_endpoint
-  description = "Set this as VITE_API_URL in Amplify (or bake it in before an S3 upload)"
+  description = "Paste this into frontend/config.js as apiUrl"
 }
 
 output "high_scores_table" {
