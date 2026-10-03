@@ -10,11 +10,16 @@ export default function SubmitScoreModal({
   success,
 }) {
   const [username, setUsername] = useState("");
+  const [confirming, setConfirming] = useState(false);
 
   if (!open) return null;
 
-  function handleSubmit(event) {
+  function handleReview(event) {
     event.preventDefault();
+    setConfirming(true);
+  }
+
+  function handleConfirm() {
     onSubmit(username.trim());
   }
 
@@ -32,9 +37,43 @@ export default function SubmitScoreModal({
           Game over. Your score was <strong>{snapshot?.score ?? 0}</strong>.
         </p>
         {success ? (
-          <p className="status-text">Score saved. Check the leaderboard!</p>
+          <p className="status-text">
+            Sent for review. It will show on the leaderboard after it is approved.
+          </p>
+        ) : confirming ? (
+          <div>
+            <p className="status-text">Check this before sending:</p>
+            <ul className="high-scores-list">
+              <li>
+                <strong>Name:</strong> {username.trim()}
+              </li>
+              <li>
+                <strong>Score:</strong> {snapshot?.score ?? 0}
+              </li>
+              <li>
+                <strong>Gold:</strong> {snapshot?.gold ?? 0}
+              </li>
+              <li>
+                <strong>Health:</strong> {snapshot?.health ?? 0}
+              </li>
+              <li>
+                <strong>Ninjas:</strong> {snapshot?.ninjas ?? 0}
+              </li>
+              <li>
+                <strong>Fire arrows:</strong> {snapshot?.fire_arrows ? "yes" : "no"}
+              </li>
+            </ul>
+            <div className="submit-score-form">
+              <button type="button" onClick={() => setConfirming(false)} disabled={submitting}>
+                Edit name
+              </button>
+              <button type="button" onClick={handleConfirm} disabled={submitting}>
+                {submitting ? "Sending..." : "Send for review"}
+              </button>
+            </div>
+          </div>
         ) : (
-          <form className="submit-score-form" onSubmit={handleSubmit}>
+          <form className="submit-score-form" onSubmit={handleReview}>
             <input
               type="text"
               maxLength={32}
@@ -43,8 +82,8 @@ export default function SubmitScoreModal({
               onChange={(event) => setUsername(event.target.value)}
               required
             />
-            <button type="submit" disabled={submitting || !username.trim()}>
-              {submitting ? "Saving..." : "Submit"}
+            <button type="submit" disabled={!username.trim()}>
+              Review
             </button>
           </form>
         )}

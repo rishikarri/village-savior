@@ -22,9 +22,9 @@ export default function HighScoresModal({
           {loading && <p className="status-text">Loading high scores...</p>}
           {error && <p className="error-text">{error}</p>}
           {!loading && !error && scores.length === 0 && (
-            <p className="status-text">No high scores yet. Survive longer!</p>
+            <p className="status-text">No approved high scores yet.</p>
           )}
-          {!loading && !error && scores.length > 0 && (
+            {!loading && !error && scores.length > 0 && (
             <ol>
               {scores.map((entry) => (
                 <li key={entry.id}>
@@ -33,6 +33,9 @@ export default function HighScoresModal({
               ))}
             </ol>
           )}
+          <p className="status-text" style={{ fontSize: "0.9em" }}>
+            New scores appear here after they are reviewed.
+          </p>
         </div>
       </div>
     </div>

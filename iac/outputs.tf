@@ -5,7 +5,12 @@ output "api_url" {
 
 output "high_scores_table" {
   value       = aws_dynamodb_table.high_scores.name
-  description = "DynamoDB table for high scores"
+  description = "DynamoDB table. Query pk=PENDING to review submissions."
+}
+
+output "admin_api_key_parameter" {
+  value       = aws_ssm_parameter.admin_api_key.name
+  description = "SSM parameter that holds the review API key"
 }
 
 output "frontend_bucket" {
